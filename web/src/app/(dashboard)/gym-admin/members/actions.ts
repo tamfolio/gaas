@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createAdminClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { resend, FROM_EMAIL, buildWelcomeMemberEmail } from "@/lib/resend";
 
 function generateBarcode() {
@@ -269,6 +269,36 @@ export async function updateMemberProfile(formData: FormData) {
     .eq("id", profileId);
 
   if (error) return { error: error.message };
+
+  revalidatePath("/gym-admin/members");
+  return { success: true };
+}
+
+export async function getMemberPayments(gymMemberId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("payments")
+    .select("id, amount, currency, status, description, paid_at, created_at")
+    .eq("gym_member_id", gymMemberId)
+    .order("paid_at", { ascending: false })
+    .limit(10);
+  return data ?? [];
+}
+
+export async function removeMember(gymMemberId: string, profileId: string) {
+  const adminClient = createAdminClient();
+
+  const { error } = await adminClient
+    .from("gym_members")
+    .delete()
+    .eq("id", gymMemberId);
+
+  if (error) return { error: error.message };
+
+  await adminClient
+    .from("profiles")
+    .update({ gym_id: null })
+    .eq("id", profileId);
 
   revalidatePath("/gym-admin/members");
   return { success: true };

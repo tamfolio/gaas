@@ -1,10 +1,20 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X, RotateCcw, UserX, UserCheck, Pencil, Check } from "lucide-react";
-import { renewMembership, updateMemberStatus, updateMemberProfile } from "./actions";
+import { X, RotateCcw, UserX, UserCheck, Pencil, Check, Trash2 } from "lucide-react";
+import { renewMembership, updateMemberStatus, updateMemberProfile, getMemberPayments, removeMember } from "./actions";
 import type { MemberRow, Plan } from "./members-client";
+
+type PaymentRecord = {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  description: string;
+  paid_at: string | null;
+  created_at: string;
+};
 
 const PAYMENT_METHODS = [
   { value: "cash", label: "Cash" },
@@ -128,6 +138,18 @@ export function MemberDetailSheet({
 
   const [panel, setPanel] = useState<"view" | "renew" | "edit">("view");
   const [error, setError] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+
+  const [payments, setPayments] = useState<PaymentRecord[] | null>(null);
+  const [paymentsLoading, setPaymentsLoading] = useState(true);
+
+  useEffect(() => {
+    setPaymentsLoading(true);
+    getMemberPayments(member.id).then((data) => {
+      setPayments(data as PaymentRecord[]);
+      setPaymentsLoading(false);
+    });
+  }, [member.id]);
 
   // Renew form state
   const defaultPlanId = member.membership_plans?.id ?? (plans[0]?.id ?? "");
@@ -217,6 +239,20 @@ export function MemberDetailSheet({
       const result = await updateMemberProfile(fd);
       if (result?.error) {
         setError(result.error);
+      } else {
+        router.refresh();
+        onClose();
+      }
+    });
+  }
+
+  function submitRemove() {
+    setError(null);
+    startTransition(async () => {
+      const result = await removeMember(member.id, p?.id ?? "");
+      if (result?.error) {
+        setError(result.error);
+        setConfirmRemove(false);
       } else {
         router.refresh();
         onClose();
@@ -787,6 +823,190 @@ export function MemberDetailSheet({
                   No active plans. Create a membership plan first.
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Payment history */}
+          <div
+            style={{
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "0.75rem",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                padding: "1rem 1.25rem",
+                borderBottom: "1px solid var(--border)",
+              }}
+            >
+              <SectionTitle>Payment history</SectionTitle>
+            </div>
+
+            {paymentsLoading ? (
+              <div style={{ padding: "1.5rem 1.25rem", textAlign: "center" }}>
+                <span style={{ fontSize: "0.82rem", color: "var(--muted-foreground)" }}>
+                  Loading…
+                </span>
+              </div>
+            ) : !payments || payments.length === 0 ? (
+              <div style={{ padding: "1.5rem 1.25rem", textAlign: "center" }}>
+                <span style={{ fontSize: "0.82rem", color: "var(--muted-foreground)" }}>
+                  No payments recorded yet.
+                </span>
+              </div>
+            ) : (
+              payments.map((pay, i) => {
+                const statusColor =
+                  pay.status === "paid" || pay.status === "completed"
+                    ? "var(--primary)"
+                    : pay.status === "pending"
+                    ? "oklch(0.62 0.12 80)"
+                    : "var(--destructive)";
+                return (
+                  <div
+                    key={pay.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "0.75rem 1.25rem",
+                      borderBottom:
+                        i < payments.length - 1 ? "1px solid var(--border)" : "none",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontSize: "0.82rem",
+                          color: "var(--foreground)",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {pay.description || "Payment"}
+                      </div>
+                      <div style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>
+                        {(pay.paid_at ?? pay.created_at)
+                          ? new Date(pay.paid_at ?? pay.created_at).toLocaleDateString(
+                              "en-NG",
+                              { month: "short", day: "numeric", year: "numeric" }
+                            )
+                          : "—"}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0 }}>
+                      <div
+                        style={{
+                          fontSize: "0.875rem",
+                          fontWeight: 600,
+                          color: "var(--foreground)",
+                          fontFamily: "var(--font-syne)",
+                        }}
+                      >
+                        ₦{pay.amount.toLocaleString("en-NG")}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "0.62rem",
+                          fontWeight: 600,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          color: statusColor,
+                        }}
+                      >
+                        {pay.status}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Remove member */}
+          {!confirmRemove ? (
+            <button
+              onClick={() => setConfirmRemove(true)}
+              style={{
+                alignSelf: "flex-start",
+                background: "none",
+                border: "none",
+                color: "var(--destructive)",
+                fontSize: "0.8rem",
+                cursor: "pointer",
+                fontFamily: "var(--font-jakarta)",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.375rem",
+                padding: "0.25rem 0",
+                opacity: 0.7,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
+            >
+              <Trash2 size={13} />
+              Remove member
+            </button>
+          ) : (
+            <div
+              style={{
+                background: "color-mix(in oklch, var(--destructive) 8%, var(--background))",
+                border: "1px solid color-mix(in oklch, var(--destructive) 25%, transparent)",
+                borderRadius: "0.625rem",
+                padding: "1rem 1.25rem",
+              }}
+            >
+              {error && <InlineError msg={error} />}
+              <p
+                style={{
+                  fontSize: "0.82rem",
+                  color: "var(--foreground)",
+                  marginBottom: "0.75rem",
+                  lineHeight: 1.5,
+                }}
+              >
+                This will remove <strong>{p?.full_name}</strong> from your gym. Their account will be de-linked but payment history is kept.
+              </p>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <button
+                  onClick={() => setConfirmRemove(false)}
+                  style={{
+                    flex: 1,
+                    height: "2.25rem",
+                    borderRadius: "0.5rem",
+                    border: "1px solid var(--border)",
+                    background: "var(--background)",
+                    color: "var(--foreground)",
+                    fontSize: "0.82rem",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-jakarta)",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={submitRemove}
+                  disabled={isPending}
+                  style={{
+                    flex: 1,
+                    height: "2.25rem",
+                    borderRadius: "0.5rem",
+                    border: "none",
+                    background: "var(--destructive)",
+                    color: "#fff",
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                    cursor: isPending ? "not-allowed" : "pointer",
+                    fontFamily: "var(--font-jakarta)",
+                  }}
+                >
+                  {isPending ? "Removing…" : "Yes, remove"}
+                </button>
+              </div>
             </div>
           )}
         </div>

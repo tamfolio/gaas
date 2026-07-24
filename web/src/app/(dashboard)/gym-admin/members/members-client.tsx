@@ -236,13 +236,13 @@ export function MembersClient({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 150px 130px 100px 110px",
+            gridTemplateColumns: "1fr 150px 130px 100px 110px 48px",
             padding: "0.7rem 1.25rem",
             borderBottom: "1px solid var(--border)",
             background: "var(--muted)",
           }}
         >
-          {["Name", "Plan", "Status", "Expires", "Joined"].map((h) => (
+          {["Name", "Plan", "Status", "Expires", "Joined", ""].map((h) => (
             <span
               key={h}
               style={{
@@ -286,20 +286,14 @@ export function MembersClient({
             return (
               <div
                 key={m.id}
-                onClick={() => setSelected(m)}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 150px 130px 100px 110px",
+                  gridTemplateColumns: "1fr 150px 130px 100px 110px 48px",
                   padding: "0.875rem 1.25rem",
                   borderBottom:
                     i < filtered.length - 1 ? "1px solid var(--border)" : "none",
                   alignItems: "center",
-                  cursor: "pointer",
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "var(--muted)")
-                }
-                onMouseLeave={(e) => (e.currentTarget.style.background = "")}
               >
                 {/* Name + email */}
                 <div
@@ -370,6 +364,26 @@ export function MembersClient({
                       })
                     : "—"}
                 </span>
+
+                {/* View button */}
+                <button
+                  onClick={() => setSelected(m)}
+                  style={{
+                    height: "2rem",
+                    padding: "0 0.625rem",
+                    borderRadius: "0.375rem",
+                    border: "1px solid var(--border)",
+                    background: "var(--background)",
+                    color: "var(--muted-foreground)",
+                    fontSize: "0.72rem",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    fontFamily: "var(--font-jakarta)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  View
+                </button>
               </div>
             );
           })
