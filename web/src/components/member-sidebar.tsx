@@ -336,11 +336,9 @@ export function MemberSidebar({
           <Menu size={20} />
         </button>
 
-        <img
-          src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
-          alt="EngineRoom"
-          style={{ display: "block", height: "22px", width: "auto" }}
-        />
+        <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "#fff" }}>
+          Engine<span style={{ color: "var(--primary)" }}>Room</span>
+        </span>
 
         <ThemeToggle onDark />
       </div>
