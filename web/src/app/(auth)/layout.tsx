@@ -31,17 +31,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           }}
         >
           <Link href="/" style={{ textDecoration: "none", display: "inline-block" }}>
-            <span
-              style={{
-                fontFamily: "var(--font-syne)",
-                fontSize: "1.4rem",
-                fontWeight: 800,
-                color: "var(--brand-dark-fg)",
-                letterSpacing: "-0.04em",
-              }}
-            >
-              Engine<span style={{ color: "var(--primary)" }}>Room</span>
-            </span>
+            <img
+              src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
+              alt="EngineRoom"
+              style={{ display: "block", height: "28px", width: "auto" }}
+            />
           </Link>
 
           <div>
@@ -145,17 +139,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               justifyContent: "space-between",
             }}
           >
-            <span
-              style={{
-                fontFamily: "var(--font-syne)",
-                fontSize: "1.4rem",
-                fontWeight: 800,
-                color: "var(--foreground)",
-                letterSpacing: "-0.04em",
-              }}
-            >
-              Engine<span style={{ color: "var(--primary)" }}>Room</span>
-            </span>
+            <img
+              src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-primary_uk27o5.svg"
+              alt="EngineRoom"
+              style={{ display: "block", height: "28px", width: "auto" }}
+            />
             <ThemeToggle />
           </div>
         )}

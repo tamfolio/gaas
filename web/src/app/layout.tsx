@@ -24,6 +24,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "EngineRoom",
   description: "The gym management platform for Nigerian gym businesses",
+  icons: {
+    icon: "https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-favicon_raihiq.svg",
+    apple: "https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-favicon_raihiq.svg",
+  },
 };
 
 export default function RootLayout({

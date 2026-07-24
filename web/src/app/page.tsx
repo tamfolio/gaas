@@ -48,17 +48,12 @@ export default async function Home() {
           borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}
       >
-        <span
-          style={{
-            fontFamily: "var(--font-syne)",
-            fontSize: "1.35rem",
-            fontWeight: 800,
-            color: "var(--brand-dark-fg)",
-            letterSpacing: "-0.04em",
-          }}
-        >
-          Engine<span style={{ color: "var(--primary)" }}>Room</span>
-        </span>
+        <img
+          src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
+          alt="EngineRoom"
+          height={30}
+          style={{ display: "block", height: "30px", width: "auto" }}
+        />
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <ThemeToggle onDark />
           <Link
@@ -804,17 +799,11 @@ export default async function Home() {
           borderTop: "1px solid rgba(255,255,255,0.05)",
         }}
       >
-        <span
-          style={{
-            fontFamily: "var(--font-syne)",
-            fontSize: "1rem",
-            fontWeight: 800,
-            color: "var(--brand-dark-fg)",
-            letterSpacing: "-0.04em",
-          }}
-        >
-          Engine<span style={{ color: "var(--primary)" }}>Room</span>
-        </span>
+        <img
+          src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
+          alt="EngineRoom"
+          style={{ display: "block", height: "24px", width: "auto" }}
+        />
         <p style={{ fontSize: "0.75rem", color: "oklch(0.30 0.005 60)" }}>
           © 2026 EngineRoom. Gym management for Nigerian gym businesses.
         </p>

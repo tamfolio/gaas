@@ -130,18 +130,11 @@ function SidebarInner({
         }}
       >
         <Link href="/" style={{ textDecoration: "none", flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontFamily: "var(--font-syne)",
-              fontSize: "1.15rem",
-              fontWeight: 800,
-              color: "var(--brand-dark-fg)",
-              letterSpacing: "-0.04em",
-              lineHeight: 1,
-            }}
-          >
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
-          </div>
+          <img
+            src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
+            alt="EngineRoom"
+            style={{ display: "block", height: "22px", width: "auto" }}
+          />
           <div
             style={{
               fontSize: "0.7rem",
@@ -350,17 +343,11 @@ export function GymAdminSidebar({
           <Menu size={20} />
         </button>
 
-        <span
-          style={{
-            fontFamily: "var(--font-syne)",
-            fontSize: "1.1rem",
-            fontWeight: 800,
-            color: "var(--brand-dark-fg)",
-            letterSpacing: "-0.04em",
-          }}
-        >
-          Engine<span style={{ color: "var(--primary)" }}>Room</span>
-        </span>
+        <img
+          src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
+          alt="EngineRoom"
+          style={{ display: "block", height: "22px", width: "auto" }}
+        />
 
         <ThemeToggle onDark />
       </div>
