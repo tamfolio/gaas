@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}
