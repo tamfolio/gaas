@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { login } from "../actions";
 import { Button } from "@/components/ui/button";
@@ -8,19 +8,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
-    const result = await login(new FormData(e.currentTarget));
-    if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-    }
+    startTransition(async () => {
+      const result = await login(new FormData(e.currentTarget));
+      if (result?.error) {
+        setError(result.error);
+      }
+    });
   }
 
   return (
@@ -108,10 +108,10 @@ export default function LoginPage() {
         <Button
           type="submit"
           className="w-full h-10"
-          disabled={loading}
+          disabled={isPending}
           style={{ marginTop: "0.25rem" }}
         >
-          {loading ? "Signing in…" : "Sign in"}
+          {isPending ? "Signing in…" : "Sign in"}
         </Button>
       </form>
 

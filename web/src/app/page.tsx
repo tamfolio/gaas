@@ -48,12 +48,9 @@ export default async function Home() {
           borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}
       >
-        <img
-          src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
-          alt="EngineRoom"
-          height={30}
-          style={{ display: "block", height: "30px", width: "auto" }}
-        />
+        <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.15rem", letterSpacing: "-0.04em", color: "#fff" }}>
+          Engine<span style={{ color: "var(--primary)" }}>Room</span>
+        </span>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <ThemeToggle onDark />
           <Link
@@ -799,11 +796,9 @@ export default async function Home() {
           borderTop: "1px solid rgba(255,255,255,0.05)",
         }}
       >
-        <img
-          src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
-          alt="EngineRoom"
-          style={{ display: "block", height: "24px", width: "auto" }}
-        />
+        <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "#fff" }}>
+          Engine<span style={{ color: "var(--primary)" }}>Room</span>
+        </span>
         <p style={{ fontSize: "0.75rem", color: "oklch(0.30 0.005 60)" }}>
           © 2026 EngineRoom. Gym management for Nigerian gym businesses.
         </p>

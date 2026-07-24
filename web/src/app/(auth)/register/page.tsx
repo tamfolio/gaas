@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { registerGym } from "../actions";
 import { Button } from "@/components/ui/button";
@@ -43,19 +43,19 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export default function RegisterPage() {
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
-    const result = await registerGym(new FormData(e.currentTarget));
-    if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-    }
+    startTransition(async () => {
+      const result = await registerGym(new FormData(e.currentTarget));
+      if (result?.error) {
+        setError(result.error);
+      }
+    });
   }
 
   return (
@@ -156,10 +156,10 @@ export default function RegisterPage() {
         <Button
           type="submit"
           className="w-full h-10"
-          disabled={loading}
+          disabled={isPending}
           style={{ marginTop: "0.5rem" }}
         >
-          {loading ? "Setting up your gym…" : "Create gym account"}
+          {isPending ? "Setting up your gym…" : "Create gym account"}
         </Button>
       </form>
 

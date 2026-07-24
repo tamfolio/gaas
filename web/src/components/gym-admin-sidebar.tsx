@@ -130,11 +130,9 @@ function SidebarInner({
         }}
       >
         <Link href="/" style={{ textDecoration: "none", flex: 1, minWidth: 0 }}>
-          <img
-            src="https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-logo-dark_o9gbqy.svg"
-            alt="EngineRoom"
-            style={{ display: "block", height: "22px", width: "auto" }}
-          />
+          <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "#fff" }}>
+            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+          </span>
           <div
             style={{
               fontSize: "0.7rem",
