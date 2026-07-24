@@ -1,7 +1,8 @@
-import type { NextConfig } from "next";
+const path = require('path');
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  // point tracing at the monorepo root (one level up from web/)
+  outputFileTracingRoot: path.join(__dirname, '../'),
 };
 
-export default nextConfig;
+module.exports = nextConfig;
