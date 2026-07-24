@@ -1,0 +1,23 @@
+@"
+# dependencies (any subfolder)
+**/node_modules/
+**/.pnp
+**/.yarn/*
+# next.js build output
+**/.next/
+**/out/
+# production builds
+**/build/
+**/dist/
+# env & secrets
+**/.env
+**/.env.*
+# logs
+**/*-debug.log*
+# misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+.vercel
+.vscode/
+"@ | Out-File -Encoding utf8 .gitignore
