@@ -190,3 +190,86 @@ export async function addTrainer(formData: FormData) {
   revalidatePath("/gym-admin/trainers");
   return { success: true };
 }
+
+export async function renewMembership(formData: FormData) {
+  const adminClient = createAdminClient();
+
+  const gymMemberId = formData.get("gym_member_id") as string;
+  const gymId = formData.get("gym_id") as string;
+  const planId = formData.get("plan_id") as string;
+  const paymentMethod = formData.get("payment_method") as string;
+  const paymentAmount = parseFloat(formData.get("payment_amount") as string) || 0;
+  const startDate = (formData.get("start_date") as string) || new Date().toISOString().split("T")[0];
+
+  const { data: plan } = await adminClient
+    .from("membership_plans")
+    .select("duration_days, name")
+    .eq("id", planId)
+    .single();
+
+  if (!plan) return { error: "Plan not found" };
+
+  const end = new Date(startDate);
+  end.setDate(end.getDate() + plan.duration_days);
+  const endDate = end.toISOString().split("T")[0];
+
+  const { error: updateError } = await adminClient
+    .from("gym_members")
+    .update({
+      membership_plan_id: planId,
+      status: "active",
+      start_date: startDate,
+      end_date: endDate,
+    })
+    .eq("id", gymMemberId);
+
+  if (updateError) return { error: updateError.message };
+
+  if (paymentAmount > 0) {
+    await adminClient.from("payments").insert({
+      gym_id: gymId,
+      gym_member_id: gymMemberId,
+      amount: paymentAmount,
+      currency: "NGN",
+      status: "paid",
+      payment_method: paymentMethod,
+      description: `${plan.name} membership renewal`,
+      paid_at: startDate,
+    });
+  }
+
+  revalidatePath("/gym-admin/members");
+  return { success: true };
+}
+
+export async function updateMemberStatus(gymMemberId: string, status: string) {
+  const adminClient = createAdminClient();
+
+  const { error } = await adminClient
+    .from("gym_members")
+    .update({ status })
+    .eq("id", gymMemberId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/gym-admin/members");
+  return { success: true };
+}
+
+export async function updateMemberProfile(formData: FormData) {
+  const adminClient = createAdminClient();
+
+  const profileId = formData.get("profile_id") as string;
+  const fullName = formData.get("full_name") as string;
+  const phone = (formData.get("phone") as string) || null;
+
+  const { error } = await adminClient
+    .from("profiles")
+    .update({ full_name: fullName, phone })
+    .eq("id", profileId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/gym-admin/members");
+  return { success: true };
+}
