@@ -11,6 +11,7 @@ import {
   Dumbbell,
   BarChart2,
   Bell,
+  UserCircle,
   LogOut,
   Menu,
   X,
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { icon: Dumbbell, label: "Workout Plan", href: "/member/workout" },
   { icon: BarChart2, label: "BMI Tracker", href: "/member/bmi" },
   { icon: Bell, label: "Notifications", href: "/member/notifications" },
+  { icon: UserCircle, label: "My Profile", href: "/member/profile" },
 ];
 
 function NavItem({

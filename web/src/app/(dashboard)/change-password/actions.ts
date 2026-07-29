@@ -15,12 +15,17 @@ export async function changePassword(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.updateUser({
+
+  const { data: { user }, error } = await supabase.auth.updateUser({
     password: newPassword,
     data: { must_change_password: false },
   });
 
   if (error) return { error: error.message };
+
+  if (user) {
+    await supabase.from("profiles").update({ account_status: "active" }).eq("id", user.id);
+  }
 
   redirect("/member");
 }

@@ -147,16 +147,15 @@ export async function addTrainer(formData: FormData) {
   const fullName = formData.get("full_name") as string;
   const email = formData.get("email") as string;
   const phone = (formData.get("phone") as string) || null;
-  const password = formData.get("password") as string;
   const specialization = (formData.get("specialization") as string) || null;
   const bio = (formData.get("bio") as string) || null;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
   const { data: authData, error: authError } =
-    await adminClient.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name: fullName, role: "trainer" },
+    await adminClient.auth.admin.inviteUserByEmail(email, {
+      data: { full_name: fullName, role: "trainer" },
+      redirectTo: `${siteUrl}/auth/callback?next=/trainer`,
     });
 
   if (authError) return { error: authError.message };
@@ -165,7 +164,7 @@ export async function addTrainer(formData: FormData) {
 
   const { error: profileError } = await adminClient
     .from("profiles")
-    .update({ gym_id: gymId, role: "trainer", phone })
+    .update({ full_name: fullName, gym_id: gymId, role: "trainer", phone })
     .eq("id", userId);
 
   if (profileError) {
@@ -301,5 +300,46 @@ export async function removeMember(gymMemberId: string, profileId: string) {
     .eq("id", profileId);
 
   revalidatePath("/gym-admin/members");
+  return { success: true };
+}
+
+export async function resendMemberInvite(profileId: string, email: string, gymId: string) {
+  const adminClient = createAdminClient();
+
+  const newPassword = generateTempPassword();
+
+  const [{ error: pwError }, { data: gym }] = await Promise.all([
+    adminClient.auth.admin.updateUserById(profileId, {
+      password: newPassword,
+      user_metadata: { must_change_password: true },
+    }),
+    adminClient.from("gyms").select("name").eq("id", gymId).single(),
+  ]);
+
+  if (pwError) return { error: pwError.message };
+
+  const { data: profile } = await adminClient
+    .from("profiles")
+    .select("full_name")
+    .eq("id", profileId)
+    .single();
+
+  const loginUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/login`;
+
+  const { error: emailError } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to: [email],
+    subject: `Your login details for ${gym?.name ?? "your gym"} — EngineRoom`,
+    html: buildWelcomeMemberEmail({
+      gymName: gym?.name ?? "your gym",
+      memberName: profile?.full_name ?? email,
+      email,
+      tempPassword: newPassword,
+      loginUrl,
+    }),
+  });
+
+  if (emailError) return { error: "Password reset but email failed to send." };
+
   return { success: true };
 }

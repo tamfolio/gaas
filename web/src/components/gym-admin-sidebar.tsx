@@ -17,6 +17,7 @@ import {
   LogOut,
   Menu,
   X,
+  ScanLine,
 } from "lucide-react";
 
 const NAV_SECTIONS = [
@@ -29,6 +30,7 @@ const NAV_SECTIONS = [
       { icon: Tag, label: "Plans", href: "/gym-admin/plans" },
       { icon: CreditCard, label: "Payments", href: "/gym-admin/payments" },
       { icon: Bell, label: "Notifications", href: "/gym-admin/notifications" },
+      { icon: ScanLine, label: "Check-in", href: "/gym-admin/check-in" },
     ],
   },
   {

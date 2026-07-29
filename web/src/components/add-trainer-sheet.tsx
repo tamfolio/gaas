@@ -166,6 +166,9 @@ export function AddTrainerSheet({ gymId }: { gymId: string }) {
                   Email <span style={{ color: "var(--destructive)" }}>*</span>
                 </Label>
                 <Input id="t_email" name="email" type="email" placeholder="trainer@example.com" required className="h-10" />
+                <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>
+                  An invitation email will be sent to this address.
+                </p>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
@@ -173,24 +176,6 @@ export function AddTrainerSheet({ gymId }: { gymId: string }) {
                   Phone
                 </Label>
                 <Input id="t_phone" name="phone" type="tel" placeholder="+234 800 000 0000" className="h-10" />
-              </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
-                <Label htmlFor="t_password" style={{ fontSize: "0.8rem", fontWeight: 500 }}>
-                  Initial password <span style={{ color: "var(--destructive)" }}>*</span>
-                </Label>
-                <Input
-                  id="t_password"
-                  name="password"
-                  type="password"
-                  placeholder="Min. 6 characters"
-                  required
-                  minLength={6}
-                  className="h-10"
-                />
-                <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>
-                  Share this with the trainer. They can reset it anytime.
-                </p>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>

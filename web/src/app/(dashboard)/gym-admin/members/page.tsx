@@ -20,7 +20,7 @@ export default async function MembersPage() {
     supabase
       .from("gym_members")
       .select(
-        "id, status, start_date, end_date, created_at, barcode_code, profiles:profile_id(id, full_name, email, phone), membership_plans:membership_plan_id(id, name, price, duration_days)",
+        "id, status, start_date, end_date, created_at, barcode_code, profiles:profile_id(id, full_name, email, phone, account_status), membership_plans:membership_plan_id(id, name, price, duration_days)",
         { count: "exact" }
       )
       .eq("gym_id", gymId)

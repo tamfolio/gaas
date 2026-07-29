@@ -2,8 +2,8 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X, RotateCcw, UserX, UserCheck, Pencil, Check, Trash2 } from "lucide-react";
-import { renewMembership, updateMemberStatus, updateMemberProfile, getMemberPayments, removeMember } from "./actions";
+import { X, RotateCcw, UserX, UserCheck, Pencil, Check, Trash2, Mail } from "lucide-react";
+import { renewMembership, updateMemberStatus, updateMemberProfile, getMemberPayments, removeMember, resendMemberInvite } from "./actions";
 import type { MemberRow, Plan } from "./members-client";
 
 type PaymentRecord = {
@@ -122,6 +122,29 @@ function InlineError({ msg }: { msg: string }) {
   );
 }
 
+function AccountStatusPill({ accountStatus }: { accountStatus: string }) {
+  const activated = accountStatus === "active";
+  return (
+    <span
+      style={{
+        fontSize: "0.6rem",
+        fontWeight: 600,
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+        padding: "0.2rem 0.5rem",
+        borderRadius: "100px",
+        background: activated
+          ? "color-mix(in oklch, oklch(0.55 0.15 155) 12%, transparent)"
+          : "var(--muted)",
+        color: activated ? "oklch(0.4 0.13 155)" : "var(--muted-foreground)",
+        border: `1px solid ${activated ? "color-mix(in oklch, oklch(0.55 0.15 155) 25%, transparent)" : "var(--border)"}`,
+      }}
+    >
+      {activated ? "Activated" : "Invited"}
+    </span>
+  );
+}
+
 export function MemberDetailSheet({
   member,
   plans,
@@ -139,6 +162,7 @@ export function MemberDetailSheet({
   const [panel, setPanel] = useState<"view" | "renew" | "edit">("view");
   const [error, setError] = useState<string | null>(null);
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const [inviteSent, setInviteSent] = useState(false);
 
   const [payments, setPayments] = useState<PaymentRecord[] | null>(null);
   const [paymentsLoading, setPaymentsLoading] = useState(true);
@@ -256,6 +280,19 @@ export function MemberDetailSheet({
       } else {
         router.refresh();
         onClose();
+      }
+    });
+  }
+
+  function submitResendInvite() {
+    setError(null);
+    setInviteSent(false);
+    startTransition(async () => {
+      const result = await resendMemberInvite(p?.id ?? "", p?.email ?? "", gymId);
+      if (result?.error) {
+        setError(result.error);
+      } else {
+        setInviteSent(true);
       }
     });
   }
@@ -381,6 +418,9 @@ export function MemberDetailSheet({
                   {p.phone}
                 </div>
               )}
+              <div style={{ marginTop: "0.375rem" }}>
+                <AccountStatusPill accountStatus={p?.account_status ?? "invited"} />
+              </div>
             </div>
             <button
               onClick={() => setPanel(panel === "edit" ? "view" : "edit")}
@@ -924,6 +964,38 @@ export function MemberDetailSheet({
                   </div>
                 );
               })
+            )}
+          </div>
+
+          {/* Resend invite */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <button
+              onClick={submitResendInvite}
+              disabled={isPending}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--muted-foreground)",
+                fontSize: "0.8rem",
+                cursor: isPending ? "not-allowed" : "pointer",
+                fontFamily: "var(--font-jakarta)",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.375rem",
+                padding: "0.25rem 0",
+                opacity: isPending ? 0.5 : 0.8,
+              }}
+              onMouseEnter={(e) => { if (!isPending) e.currentTarget.style.opacity = "1"; }}
+              onMouseLeave={(e) => { if (!isPending) e.currentTarget.style.opacity = "0.8"; }}
+            >
+              <Mail size={13} />
+              {isPending ? "Sending…" : "Resend invite email"}
+            </button>
+            {inviteSent && (
+              <span style={{ fontSize: "0.75rem", color: "oklch(0.45 0.12 155)", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                <Check size={12} />
+                Sent
+              </span>
             )}
           </div>
 

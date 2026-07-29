@@ -12,7 +12,7 @@ export type MemberRow = {
   end_date: string | null;
   created_at: string;
   barcode_code: string | null;
-  profiles: { id: string; full_name: string; email: string; phone: string | null } | null;
+  profiles: { id: string; full_name: string; email: string; phone: string | null; account_status: string } | null;
   membership_plans: { id: string; name: string; price: number; duration_days: number } | null;
 };
 
@@ -49,6 +49,32 @@ function ExpiryCell({ end_date }: { end_date: string | null }) {
       }}
     >
       {expired ? "Expired" : days === 1 ? "1 day" : `${days} days`}
+    </span>
+  );
+}
+
+function AccountBadge({ accountStatus }: { accountStatus: string }) {
+  const activated = accountStatus === "active";
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.3rem",
+        fontSize: "0.6rem",
+        fontWeight: 600,
+        letterSpacing: "0.05em",
+        textTransform: "uppercase",
+        padding: "0.15rem 0.5rem",
+        borderRadius: "100px",
+        background: activated
+          ? "color-mix(in oklch, oklch(0.55 0.15 155) 12%, transparent)"
+          : "var(--muted)",
+        color: activated ? "oklch(0.4 0.13 155)" : "var(--muted-foreground)",
+        border: `1px solid ${activated ? "color-mix(in oklch, oklch(0.55 0.15 155) 25%, transparent)" : "var(--border)"}`,
+      }}
+    >
+      {activated ? "Activated" : "Invited"}
     </span>
   );
 }
@@ -242,7 +268,7 @@ export function MembersClient({
             background: "var(--muted)",
           }}
         >
-          {["Name", "Plan", "Status", "Expires", "Joined", ""].map((h) => (
+          {["Name", "Plan", "Status", "Expires", "Joined", ""].map((h, i) => (
             <span
               key={h}
               style={{
@@ -349,7 +375,10 @@ export function MembersClient({
                 </span>
 
                 {/* Status */}
-                <StatusBadge status={m.status} />
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                  <AccountBadge accountStatus={m.profiles?.account_status ?? "invited"} />
+                  <StatusBadge status={m.status} />
+                </div>
 
                 {/* Expires */}
                 <ExpiryCell end_date={m.end_date} />
