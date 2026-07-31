@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { MembershipStatus } from "@/types";
 import { FeatureCards } from "./feature-cards";
+import { initiateRenewalPayment } from "./billing/actions";
 
 const STATUS_STYLES: Record<MembershipStatus, { color: string; bg: string; border: string }> = {
   active: {
@@ -178,24 +179,50 @@ export default async function MemberPage() {
             </span>
           </div>
 
-          <div style={{ display: "flex", gap: "2.5rem" }}>
-            <div>
-              <p style={{ fontSize: "0.68rem", color: "var(--brand-dark-muted)", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                Check-ins
-              </p>
-              <p style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, color: "var(--brand-dark-fg)", letterSpacing: "-0.04em", lineHeight: 1 }}>
-                {checkInCount ?? 0}
-              </p>
-            </div>
-            {endDate && (
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "2.5rem" }}>
               <div>
                 <p style={{ fontSize: "0.68rem", color: "var(--brand-dark-muted)", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                  Expires
+                  Check-ins
                 </p>
-                <p style={{ fontFamily: "var(--font-syne)", fontSize: "1rem", fontWeight: 700, color: "var(--brand-dark-fg)", letterSpacing: "-0.02em", lineHeight: 1 }}>
-                  {endDate}
+                <p style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, color: "var(--brand-dark-fg)", letterSpacing: "-0.04em", lineHeight: 1 }}>
+                  {checkInCount ?? 0}
                 </p>
               </div>
+              {endDate && (
+                <div>
+                  <p style={{ fontSize: "0.68rem", color: "var(--brand-dark-muted)", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                    Expires
+                  </p>
+                  <p style={{ fontFamily: "var(--font-syne)", fontSize: "1rem", fontWeight: 700, color: "var(--brand-dark-fg)", letterSpacing: "-0.02em", lineHeight: 1 }}>
+                    {endDate}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Show pay button for all statuses except suspended */}
+            {memberRecord && status !== "suspended" && (
+              <form action={initiateRenewalPayment}>
+                <button
+                  type="submit"
+                  style={{
+                    padding: "0.5rem 1rem",
+                    background: "var(--primary)",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontFamily: "var(--font-jakarta)",
+                    fontWeight: 600,
+                    fontSize: "0.8rem",
+                    cursor: "pointer",
+                    letterSpacing: "-0.01em",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {status === "active" ? "Renew online" : "Pay to activate"}
+                </button>
+              </form>
             )}
           </div>
         </div>

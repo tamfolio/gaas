@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -47,8 +48,8 @@ export default async function SettingsPage() {
         </h1>
       </div>
 
-      {/* Gym info */}
-      <div style={{ marginBottom: "1.5rem" }}>
+      {/* Gym details — editable */}
+      <div style={{ marginBottom: "1.75rem" }}>
         <h2
           style={{
             fontFamily: "var(--font-syne)",
@@ -65,52 +66,22 @@ export default async function SettingsPage() {
           style={{
             background: "var(--card)",
             border: "1px solid var(--border)",
-            borderRadius: "0.75rem",
-            overflow: "hidden",
+            borderRadius: "0.875rem",
+            padding: "1.5rem",
           }}
         >
-          {[
-            { label: "Gym name", value: gym?.name },
-            { label: "Email", value: gym?.email },
-            { label: "Phone", value: gym?.phone },
-            { label: "Address", value: gym?.address },
-          ].map((row, i) => (
-            <div
-              key={row.label}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "0.875rem 1.25rem",
-                borderBottom: i < 3 ? "1px solid var(--border)" : "none",
-                gap: "1rem",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "0.82rem",
-                  color: "var(--muted-foreground)",
-                  fontWeight: 500,
-                  flexShrink: 0,
-                }}
-              >
-                {row.label}
-              </span>
-              <span
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--foreground)",
-                  textAlign: "right",
-                }}
-              >
-                {row.value ?? "—"}
-              </span>
-            </div>
-          ))}
+          <SettingsForm
+            gym={{
+              name: gym?.name ?? null,
+              email: gym?.email ?? null,
+              phone: gym?.phone ?? null,
+              address: gym?.address ?? null,
+            }}
+          />
         </div>
       </div>
 
-      {/* Plan */}
+      {/* Subscription — read-only */}
       <div>
         <h2
           style={{
@@ -128,7 +99,7 @@ export default async function SettingsPage() {
           style={{
             background: "var(--card)",
             border: "1px solid var(--border)",
-            borderRadius: "0.75rem",
+            borderRadius: "0.875rem",
             padding: "1.25rem",
             display: "flex",
             alignItems: "center",

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { WorkoutPlanData } from "@/types";
+import { WorkoutTimer } from "./workout-timer";
 
 export default async function WorkoutPage() {
   const supabase = await createClient();
@@ -330,6 +331,7 @@ export default async function WorkoutPage() {
           ))}
         </>
       )}
+      <WorkoutTimer />
     </div>
   );
 }

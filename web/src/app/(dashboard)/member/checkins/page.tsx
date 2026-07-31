@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ScanLine } from "lucide-react";
+import { CheckInCalendar } from "./checkin-calendar";
 
 export default async function CheckInsPage() {
   const supabase = await createClient();
@@ -23,15 +24,26 @@ export default async function CheckInsPage() {
     .eq("gym_id", profile.gym_id)
     .single();
 
-  const { data: checkIns, count } = member
-    ? await supabase
-        .from("check_ins")
-        .select("id, checked_in_at, status", { count: "exact" })
-        .eq("gym_member_id", member.id)
-        .order("checked_in_at", { ascending: false })
-        .limit(100)
-    : { data: [], count: 0 };
+  // Separate queries: calendar needs all successful timestamps; table needs recent 100 with status
+  const [{ data: checkIns, count }, { data: calendarRows }] = await Promise.all([
+    member
+      ? supabase
+          .from("check_ins")
+          .select("id, checked_in_at, status", { count: "exact" })
+          .eq("gym_member_id", member.id)
+          .order("checked_in_at", { ascending: false })
+          .limit(100)
+      : Promise.resolve({ data: [], count: 0 }),
+    member
+      ? supabase
+          .from("check_ins")
+          .select("checked_in_at")
+          .eq("gym_member_id", member.id)
+          .eq("status", "success")
+      : Promise.resolve({ data: [] }),
+  ]);
 
+  const calendarTimestamps = (calendarRows ?? []).map((r) => r.checked_in_at as string);
   const successCount = checkIns?.filter((c) => c.status === "success").length ?? 0;
 
   return (
@@ -112,6 +124,9 @@ export default async function CheckInsPage() {
           </div>
         ))}
       </div>
+
+      {/* Calendar */}
+      <CheckInCalendar timestamps={calendarTimestamps} />
 
       {/* Table */}
       <div
