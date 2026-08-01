@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-favicon_raihiq.svg",
-    apple: "https://res.cloudinary.com/dnovlrekd/image/upload/w_180,h_180,c_pad,b_rgb:1c1914/v1784930105/engineroom-favicon_raihiq.png",
+    apple: "https://res.cloudinary.com/dnovlrekd/image/upload/w_180,h_180/v1784930105/engineroom-favicon_raihiq.png",
   },
 };
 

@@ -10,22 +10,16 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dnovlrekd/image/upload/w_192,h_192,c_pad,b_rgb:1c1914/v1784930105/engineroom-favicon_raihiq.png",
+      "src": "https://res.cloudinary.com/dnovlrekd/image/upload/w_192,h_192/v1784930105/engineroom-favicon_raihiq.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://res.cloudinary.com/dnovlrekd/image/upload/w_512,h_512,c_pad,b_rgb:1c1914/v1784930105/engineroom-favicon_raihiq.png",
+      "src": "https://res.cloudinary.com/dnovlrekd/image/upload/w_512,h_512/v1784930105/engineroom-favicon_raihiq.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://res.cloudinary.com/dnovlrekd/image/upload/w_512,h_512,c_pad,b_rgb:1c1914/v1784930105/engineroom-favicon_raihiq.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }
