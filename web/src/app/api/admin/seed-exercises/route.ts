@@ -58,7 +58,7 @@ async function seed(request: NextRequest): Promise<NextResponse> {
         image_url: mainImage,
       };
     })
-    .filter(Boolean);
+    .filter((x): x is NonNullable<typeof x> => x !== null);
 
   const supabase = createAdminClient();
   const { error, count } = await supabase
