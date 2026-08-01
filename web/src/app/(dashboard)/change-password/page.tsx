@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { changePassword } from "./actions";
+import { PasswordInput } from "@/components/password-input";
 
 export default function ChangePasswordPage() {
   const [error, setError] = useState<string | null>(null);
@@ -102,26 +103,13 @@ export default function ChangePasswordPage() {
               >
                 New password <span style={{ color: "var(--destructive)" }}>*</span>
               </label>
-              <input
+              <PasswordInput
                 id="new_password"
                 name="new_password"
-                type="password"
                 placeholder="Min. 8 characters"
                 required
                 minLength={8}
-                style={{
-                  height: "2.5rem",
-                  borderRadius: "0.375rem",
-                  border: "1px solid var(--border)",
-                  background: "var(--background)",
-                  color: "var(--foreground)",
-                  padding: "0 0.75rem",
-                  fontSize: "0.875rem",
-                  fontFamily: "var(--font-jakarta)",
-                  outline: "none",
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
+                className="h-10"
               />
             </div>
 
@@ -132,26 +120,13 @@ export default function ChangePasswordPage() {
               >
                 Confirm password <span style={{ color: "var(--destructive)" }}>*</span>
               </label>
-              <input
+              <PasswordInput
                 id="confirm_password"
                 name="confirm_password"
-                type="password"
                 placeholder="Repeat your new password"
                 required
                 minLength={8}
-                style={{
-                  height: "2.5rem",
-                  borderRadius: "0.375rem",
-                  border: "1px solid var(--border)",
-                  background: "var(--background)",
-                  color: "var(--foreground)",
-                  padding: "0 0.75rem",
-                  fontSize: "0.875rem",
-                  fontFamily: "var(--font-jakarta)",
-                  outline: "none",
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
+                className="h-10"
               />
             </div>
           </div>

@@ -6,6 +6,7 @@ import { registerGym } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/password-input";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -150,7 +151,7 @@ export default function RegisterPage() {
           <Label htmlFor="password" style={{ fontSize: "0.8rem", fontWeight: 500, color: "var(--foreground)" }}>
             Password
           </Label>
-          <Input id="password" name="password" type="password" placeholder="Min. 8 characters" minLength={8} required className="h-10" />
+          <PasswordInput id="password" name="password" placeholder="Min. 8 characters" minLength={8} required className="h-10" />
         </div>
 
         <Button

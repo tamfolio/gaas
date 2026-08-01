@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updatePassword } from "../actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/password-input";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -121,10 +121,9 @@ export default function ResetPasswordPage() {
           <Label htmlFor="password" style={{ fontSize: "0.8rem", fontWeight: 500, color: "var(--foreground)" }}>
             New password
           </Label>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             placeholder="Min. 8 characters"
             minLength={8}
             required
@@ -136,10 +135,9 @@ export default function ResetPasswordPage() {
           <Label htmlFor="confirm" style={{ fontSize: "0.8rem", fontWeight: 500, color: "var(--foreground)" }}>
             Confirm password
           </Label>
-          <Input
+          <PasswordInput
             id="confirm"
             name="confirm"
-            type="password"
             placeholder="Repeat your password"
             minLength={8}
             required
