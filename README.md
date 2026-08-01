@@ -105,7 +105,7 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 ### Platform
 | Feature | Status |
 |---------|--------|
-| PWA (installable, offline support) | ⬜ Pending |
+| PWA (installable, offline support) | ✅ Done | manifest, service worker, offline page, iOS meta tags |
 | Paystack webhook endpoint | ✅ Done |
 | Email notifications (Resend / Supabase) | ⬜ Pending |
 | Onboarding flow (post-register wizard) | ⬜ Pending |
