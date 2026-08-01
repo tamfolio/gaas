@@ -132,7 +132,7 @@ export async function addMember(formData: FormData) {
       memberName: fullName,
       email,
       tempPassword,
-      loginUrl: `${process.env.NEXT_PUBLIC_APP_URL}/login`,
+      loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/login`,
     }),
   });
 
