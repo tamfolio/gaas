@@ -138,8 +138,27 @@ function SidebarInner({
           <div style={{ fontSize: "0.62rem", color: "var(--primary)", fontWeight: 500 }}>Trainer</div>
         </div>
         <form action={logout}>
-          <button type="submit" title="Sign out" style={{ background: "none", border: "none", cursor: "pointer", padding: "0.25rem", color: "rgba(255,255,255,0.25)", display: "flex", alignItems: "center" }}>
-            <LogOut size={14} />
+          <button
+            type="submit"
+            title="Sign out"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "0.25rem 0.5rem",
+              color: "rgba(255,255,255,0.55)",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.375rem",
+              fontSize: "0.72rem",
+              fontWeight: 500,
+              borderRadius: "0.375rem",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
+          >
+            <LogOut size={13} />
+            Sign out
           </button>
         </form>
       </div>
