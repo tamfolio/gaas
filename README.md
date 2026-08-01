@@ -93,10 +93,16 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 ---
 
 ### Platform Admin (Super-Admin)
+
+> **Access model:** The super-admin panel is a separate section of the app, accessible only to accounts with the `super_admin` role. It is not part of any gym's tenant space.
+
+> **Gym onboarding policy:** New gyms registered via the public sign-up form do not go live immediately. They enter a **pending approval** state and must be reviewed and approved by a super-admin before they can access the platform. This prevents unauthorised or spam tenants.
+
 | Feature | Status | Notes |
 |---------|--------|-------|
-| All gyms list + stats | ⬜ Pending | view all tenants on the platform |
-| Gym detail / suspend / delete | ⬜ Pending | |
+| All gyms list (pending + active + suspended) | ⬜ Pending | separate tabs for approval queue and active tenants |
+| Approve / reject new gym registrations | ⬜ Pending | core gatekeeping flow — pending gyms cannot log in until approved |
+| Gym detail / suspend / delete | ⬜ Pending | suspend disables login for all gym users |
 | Platform-wide revenue overview | ⬜ Pending | |
 | User management (all roles) | ⬜ Pending | |
 
