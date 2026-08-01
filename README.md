@@ -109,12 +109,15 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 ---
 
 ### Platform
-| Feature | Status |
-|---------|--------|
-| PWA (installable, offline support) | ✅ Done | manifest, service worker, offline page, iOS meta tags |
-| Paystack webhook endpoint | ✅ Done |
-| Email notifications (Resend / Supabase) | ⬜ Pending |
-| Onboarding flow (post-register wizard) | ⬜ Pending |
+| Feature | Status | Notes |
+|---------|--------|-------|
+| PWA (installable, offline support) | ✅ Done | manifest, service worker, offline page, iOS meta tags; `start_url` → `/login` |
+| Password visibility toggle | ✅ Done | eye icon on all password fields |
+| Paystack webhook endpoint | ✅ Done | |
+| Exercise library (wger) | ✅ Done | seeded via `/api/admin/seed-exercises`; searchable by trainers |
+| Email — member welcome (Resend) | ✅ Done | sent on `addMember`; includes temp password + login link |
+| Email — trainer invite (Supabase) | ✅ Done | `inviteUserByEmail`; redirects to `/trainer` on accept |
+| Onboarding flow (post-register wizard) | ⬜ Pending | |
 
 ---
 
@@ -124,7 +127,23 @@ These need to be added to Vercel before the related features work in production:
 
 | Variable | Where | Why |
 |----------|-------|-----|
-| `CRON_SECRET` | Vercel env vars | Secures the `/api/cron/expiry-notifications` endpoint. Set to any random string — Vercel sends it as a bearer token when triggering the daily cron job. Without it, automated expiry alerts will return 401 and never fire. |
+| `CRON_SECRET` | Vercel env vars | Secures `/api/cron/expiry-notifications`. Without it, automated expiry alerts return 401 and never fire. |
+| `NEXT_PUBLIC_SITE_URL` | Vercel env vars | Set to `https://gaas-web-chi.vercel.app`. Used in invite/email redirect URLs. Without it, invite links fall back to localhost and fail in production. |
+| `RESEND_API_KEY` | Vercel env vars | Required for member welcome emails to send. |
+| `RESEND_FROM_EMAIL` | Vercel env vars | From address — must match a verified Resend domain. Use `EngineRoom <onboarding@resend.dev>` for testing (sends to verified addresses only). |
+
+---
+
+## Supabase Configuration (Required for Production)
+
+In Supabase → Authentication → URL Configuration:
+
+| Setting | Value |
+|---------|-------|
+| **Site URL** | `https://gaas-web-chi.vercel.app` |
+| **Redirect URLs** | `https://gaas-web-chi.vercel.app/**` |
+
+Without these, invite links and magic links will fail to redirect correctly.
 
 ---
 
@@ -132,10 +151,9 @@ These need to be added to Vercel before the related features work in production:
 
 Suggested order based on business impact:
 
-1. **Trainer workout plan management** — trainer assigns plans to members manually.
-2. **PWA** — service worker, manifest, offline page. Critical for Nigerian mobile users.
-3. **Platform super-admin** — manage all gyms, view platform-wide revenue.
-4. **Email notifications** — Resend or Supabase for expiry alerts and onboarding.
+1. **Platform super-admin** — manage all gyms, approve new registrations, view platform-wide revenue.
+2. **Email notifications** — Resend for expiry alerts and onboarding emails.
+3. **Onboarding flow** — post-register wizard for new gym admins.
 
 ---
 
@@ -152,8 +170,12 @@ Requires a `.env.local` in `web/`:
 ```
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 PAYSTACK_SECRET_KEY=
 NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=
 ANTHROPIC_API_KEY=
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=EngineRoom <onboarding@resend.dev>
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+CRON_SECRET=
 ```
