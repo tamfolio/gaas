@@ -2,7 +2,7 @@
   "name": "EngineRoom",
   "short_name": "EngineRoom",
   "description": "Gym management platform for Nigerian businesses",
-  "start_url": "/",
+  "start_url": "/login",
   "scope": "/",
   "display": "standalone",
   "background_color": "#1c1914",
