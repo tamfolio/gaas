@@ -39,8 +39,23 @@ create table profiles (
 );
 
 -- ============================================================
+-- BRANCHES
+-- Physical locations belonging to a gym
+-- ============================================================
+create table branches (
+  id uuid primary key default uuid_generate_v4(),
+  gym_id uuid not null references gyms(id) on delete cascade,
+  name text not null,
+  address text,
+  phone text,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+-- ============================================================
 -- MEMBERSHIP PLANS
 -- Plans a gym offers to its members
+-- branch_access: 'all' = any branch, 'specific' = see plan_branch_access
 -- ============================================================
 create table membership_plans (
   id uuid primary key default uuid_generate_v4(),
@@ -50,7 +65,18 @@ create table membership_plans (
   price numeric(10,2) not null,
   duration_days int not null,
   is_active boolean not null default true,
+  branch_access text not null default 'all' check (branch_access in ('all', 'specific')),
   created_at timestamptz not null default now()
+);
+
+-- ============================================================
+-- PLAN BRANCH ACCESS
+-- Which branches a 'specific' plan grants access to
+-- ============================================================
+create table plan_branch_access (
+  plan_id   uuid not null references membership_plans(id) on delete cascade,
+  branch_id uuid not null references branches(id) on delete cascade,
+  primary key (plan_id, branch_id)
 );
 
 -- ============================================================
@@ -88,11 +114,13 @@ create table gym_members (
 -- ============================================================
 -- CHECK INS
 -- Every scan event at the gym entrance
+-- branch_id: which branch was scanned (null for legacy data)
 -- ============================================================
 create table check_ins (
   id uuid primary key default uuid_generate_v4(),
   gym_id uuid not null references gyms(id) on delete cascade,
   gym_member_id uuid not null references gym_members(id) on delete cascade,
+  branch_id uuid references branches(id) on delete set null,
   status text not null check (status in ('success', 'denied')),
   checked_in_at timestamptz not null default now()
 );
@@ -166,7 +194,9 @@ create table notifications (
 
 alter table gyms enable row level security;
 alter table profiles enable row level security;
+alter table branches enable row level security;
 alter table membership_plans enable row level security;
+alter table plan_branch_access enable row level security;
 alter table gym_trainers enable row level security;
 alter table gym_members enable row level security;
 alter table check_ins enable row level security;
@@ -199,6 +229,34 @@ create policy "Gym admin can view own gym"
 create policy "Gym admin can update own gym"
   on gyms for update using (
     id in (select gym_id from profiles where id = auth.uid() and role = 'gym_admin')
+  );
+
+-- Branches: all gym users can view; only admin can manage
+create policy "Gym users can view branches"
+  on branches for select using (
+    gym_id in (select gym_id from profiles where id = auth.uid())
+  );
+
+create policy "Gym admin can manage branches"
+  on branches for all using (
+    gym_id in (select gym_id from profiles where id = auth.uid() and role = 'gym_admin')
+  );
+
+-- Plan branch access: all gym users can read; only admin can manage
+create policy "Gym users can view plan branch access"
+  on plan_branch_access for select using (
+    plan_id in (
+      select id from membership_plans
+      where gym_id in (select gym_id from profiles where id = auth.uid())
+    )
+  );
+
+create policy "Gym admin can manage plan branch access"
+  on plan_branch_access for all using (
+    plan_id in (
+      select id from membership_plans
+      where gym_id in (select gym_id from profiles where id = auth.uid() and role = 'gym_admin')
+    )
   );
 
 -- Membership plans: visible to all members of the gym
@@ -246,11 +304,14 @@ create policy "Users can mark notifications read"
 -- ============================================================
 
 create index idx_profiles_gym_id on profiles(gym_id);
+create index idx_branches_gym_id on branches(gym_id);
+create index idx_plan_branch_access_plan_id on plan_branch_access(plan_id);
 create index idx_gym_members_gym_id on gym_members(gym_id);
 create index idx_gym_members_barcode on gym_members(barcode_code);
 create index idx_check_ins_gym_id on check_ins(gym_id);
 create index idx_check_ins_member_id on check_ins(gym_member_id);
 create index idx_check_ins_date on check_ins(checked_in_at);
+create index idx_check_ins_branch_id on check_ins(branch_id);
 create index idx_notifications_profile_id on notifications(profile_id);
 create index idx_payments_gym_member_id on payments(gym_member_id);
 create index idx_workout_plans_member_id on workout_plans(gym_member_id);
