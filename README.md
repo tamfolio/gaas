@@ -55,14 +55,15 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 | Member detail / edit / remove | ✅ Done | |
 | Trainer list + add trainer | ✅ Done | |
 | Trainer detail / edit / remove | ✅ Done | |
-| Membership plans (create, edit, toggle active) | ✅ Done | |
+| Membership plans (create, edit, toggle active) | ✅ Done | branch access per plan: all branches or specific |
 | Payment log (record manual payment) | ✅ Done | |
 | Paystack payment flow (online billing) | ✅ Done | member self-pay renewal; webhook updates status |
-| QR code check-in display + live log | ✅ Done | gym displays QR; members scan to check in; admin sees live feed |
+| QR code check-in display + live log | ✅ Done | per-branch QR codes when branches enabled; branch tab selector on check-in page |
 | Notifications (view) | ✅ Done | |
 | Notifications (create / send to members) | ✅ Done | manual announcements + automated expiry alerts (7d, 3d) |
 | Gym profile | ✅ Done | |
-| Gym settings | ✅ Done | name, phone, address editable; email read-only |
+| Gym settings | ✅ Done | name, phone, address editable; Features toggle for branches |
+| Branches (multi-location) | ✅ Done | opt-in via Settings; per-branch QR; plan-level access control (all vs specific branches) |
 
 ---
 
@@ -147,6 +148,18 @@ Without these, invite links and magic links will fail to redirect correctly.
 
 ---
 
+## Database Migrations
+
+Run in order in Supabase SQL Editor:
+
+| File | Description |
+|------|-------------|
+| `supabase/schema.sql` | Full schema — use for fresh setup |
+| `supabase/migrations/002_branches.sql` | Branches + plan branch access + check-in branch tracking |
+| `supabase/migrations/003_gyms_has_branches.sql` | `has_branches` feature flag on gyms table |
+
+---
+
 ## What to Continue Next
 
 Suggested order based on business impact:
@@ -154,6 +167,7 @@ Suggested order based on business impact:
 1. **Platform super-admin** — manage all gyms, approve new registrations, view platform-wide revenue.
 2. **Email notifications** — Resend for expiry alerts and onboarding emails.
 3. **Onboarding flow** — post-register wizard for new gym admins.
+4. **Trainer attendance tracking** — trainer marks member attendance per session.
 
 ---
 
