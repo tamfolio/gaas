@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { SettingsForm } from "./settings-form";
+import { BranchesToggle } from "./branches-toggle";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -15,7 +16,7 @@ export default async function SettingsPage() {
 
   const { data: gym } = await supabase
     .from("gyms")
-    .select("name, email, phone, address, subscription_plan")
+    .select("name, email, phone, address, subscription_plan, has_branches")
     .eq("id", profile!.gym_id!)
     .single();
 
@@ -78,6 +79,32 @@ export default async function SettingsPage() {
               address: gym?.address ?? null,
             }}
           />
+        </div>
+      </div>
+
+      {/* Features */}
+      <div style={{ marginBottom: "1.75rem" }}>
+        <h2
+          style={{
+            fontFamily: "var(--font-syne)",
+            fontSize: "0.875rem",
+            fontWeight: 700,
+            color: "var(--foreground)",
+            letterSpacing: "-0.02em",
+            marginBottom: "0.875rem",
+          }}
+        >
+          Features
+        </h2>
+        <div
+          style={{
+            background: "var(--card)",
+            border: "1px solid var(--border)",
+            borderRadius: "0.875rem",
+            overflow: "hidden",
+          }}
+        >
+          <BranchesToggle enabled={gym?.has_branches ?? false} />
         </div>
       </div>
 

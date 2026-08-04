@@ -24,7 +24,7 @@ export default async function GymAdminLayout({
 
   const { data: gym } = await supabase
     .from("gyms")
-    .select("name")
+    .select("name, has_branches")
     .eq("id", profile.gym_id)
     .single();
 
@@ -39,6 +39,7 @@ export default async function GymAdminLayout({
       <GymAdminSidebar
         userName={profile.full_name ?? user.email ?? ""}
         gymName={gym?.name ?? "Your Gym"}
+        hasBranches={gym?.has_branches ?? false}
       />
       <main
         id="dash-main"

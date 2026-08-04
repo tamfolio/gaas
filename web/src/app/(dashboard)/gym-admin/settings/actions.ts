@@ -32,5 +32,27 @@ export async function updateGymDetails(formData: FormData) {
   if (error) return { error: error.message };
 
   revalidatePath("/gym-admin/settings");
+  revalidatePath("/gym-admin", "layout");
+  return { success: true };
+}
+
+export async function toggleBranchesFeature(enabled: boolean) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { data: profile } = await supabase
+    .from("profiles").select("gym_id").eq("id", user.id).single();
+  if (!profile?.gym_id) return { error: "Gym not found" };
+
+  const { error } = await supabase
+    .from("gyms")
+    .update({ has_branches: enabled })
+    .eq("id", profile.gym_id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/gym-admin/settings");
+  revalidatePath("/gym-admin", "layout");
   return { success: true };
 }

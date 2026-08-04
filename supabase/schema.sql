@@ -20,6 +20,7 @@ create table gyms (
   subscription_status text not null default 'trial' check (subscription_status in ('active', 'trial', 'suspended', 'cancelled')),
   subscription_plan text not null default 'basic' check (subscription_plan in ('basic', 'pro', 'enterprise')),
   paystack_customer_code text,
+  has_branches boolean not null default false,
   created_at timestamptz not null default now()
 );
 

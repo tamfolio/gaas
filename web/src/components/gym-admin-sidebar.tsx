@@ -18,9 +18,10 @@ import {
   Menu,
   X,
   ScanLine,
+  GitBranch,
 } from "lucide-react";
 
-const NAV_SECTIONS = [
+const BASE_NAV_SECTIONS = [
   {
     label: "Manage",
     items: [
@@ -41,6 +42,20 @@ const NAV_SECTIONS = [
     ],
   },
 ];
+
+function buildNavSections(hasBranches: boolean) {
+  if (!hasBranches) return BASE_NAV_SECTIONS;
+  return [
+    {
+      ...BASE_NAV_SECTIONS[0],
+      items: [
+        ...BASE_NAV_SECTIONS[0].items,
+        { icon: GitBranch, label: "Branches", href: "/gym-admin/branches" },
+      ],
+    },
+    BASE_NAV_SECTIONS[1],
+  ];
+}
 
 function NavItem({
   icon: Icon,
@@ -89,11 +104,13 @@ function NavItem({
 function SidebarInner({
   userName,
   gymName,
+  hasBranches,
   pathname,
   onClose,
 }: {
   userName: string;
   gymName: string;
+  hasBranches: boolean;
   pathname: string;
   onClose?: () => void;
 }) {
@@ -162,7 +179,7 @@ function SidebarInner({
           gap: "1.75rem",
         }}
       >
-        {NAV_SECTIONS.map((section) => (
+        {buildNavSections(hasBranches).map((section) => (
           <div key={section.label}>
             <div
               style={{
@@ -280,9 +297,11 @@ function SidebarInner({
 export function GymAdminSidebar({
   userName,
   gymName,
+  hasBranches,
 }: {
   userName: string;
   gymName: string;
+  hasBranches: boolean;
 }) {
   const pathname = usePathname();
   // Default false so SSR renders desktop sidebar (no flash on desktop)
@@ -311,7 +330,7 @@ export function GymAdminSidebar({
   if (!isMobile) {
     return (
       <div style={{ flexShrink: 0 }}>
-        <SidebarInner userName={userName} gymName={gymName} pathname={pathname} />
+        <SidebarInner userName={userName} gymName={gymName} hasBranches={hasBranches} pathname={pathname} />
       </div>
     );
   }
@@ -381,6 +400,7 @@ export function GymAdminSidebar({
             <SidebarInner
               userName={userName}
               gymName={gymName}
+              hasBranches={hasBranches}
               pathname={pathname}
               onClose={() => setMobileOpen(false)}
             />
