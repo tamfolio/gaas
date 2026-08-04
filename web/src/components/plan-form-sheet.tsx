@@ -13,7 +13,10 @@ type Plan = {
   description: string | null;
   price: number;
   duration_days: number;
+  branch_access: string;
 };
+
+type Branch = { id: string; name: string };
 
 const DURATION_PRESETS = [
   { label: "1 week", days: 7 },
@@ -25,7 +28,15 @@ const DURATION_PRESETS = [
   { label: "Custom", days: 0 },
 ];
 
-export function PlanFormSheet({ plan }: { plan?: Plan }) {
+export function PlanFormSheet({
+  plan,
+  branches = [],
+  planBranchIds = [],
+}: {
+  plan?: Plan;
+  branches?: Branch[];
+  planBranchIds?: string[];
+}) {
   const isEdit = !!plan;
 
   const matchedPreset = DURATION_PRESETS.find(
@@ -39,6 +50,7 @@ export function PlanFormSheet({ plan }: { plan?: Plan }) {
     matchedPreset?.days ?? (plan ? 0 : 30)
   );
   const [isCustom, setIsCustom] = useState<boolean>(!matchedPreset && !!plan);
+  const [branchAccess, setBranchAccess] = useState<string>(plan?.branch_access ?? "all");
   const formRef = useRef<HTMLFormElement>(null);
 
   function handlePresetChange(days: number) {
@@ -376,6 +388,53 @@ export function PlanFormSheet({ plan }: { plan?: Plan }) {
                   <input type="hidden" name="duration_days" value={selectedPreset} />
                 )}
               </div>
+
+              {branches.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <Label style={{ fontSize: "0.8rem", fontWeight: 500 }}>Branch access</Label>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    {(["all", "specific"] as const).map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setBranchAccess(val)}
+                        style={{
+                          flex: 1,
+                          padding: "0.5rem",
+                          borderRadius: "0.375rem",
+                          border: `1px solid ${branchAccess === val ? "var(--primary)" : "var(--border)"}`,
+                          background: branchAccess === val ? "color-mix(in oklch, var(--primary) 10%, var(--background))" : "var(--background)",
+                          color: branchAccess === val ? "var(--primary)" : "var(--foreground)",
+                          fontSize: "0.78rem",
+                          fontWeight: branchAccess === val ? 600 : 400,
+                          cursor: "pointer",
+                          fontFamily: "var(--font-jakarta)",
+                        }}
+                      >
+                        {val === "all" ? "All branches" : "Specific branches"}
+                      </button>
+                    ))}
+                  </div>
+                  <input type="hidden" name="branch_access" value={branchAccess} />
+                  {branchAccess === "specific" && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem", padding: "0.75rem", background: "var(--muted)", borderRadius: "0.5rem", border: "1px solid var(--border)" }}>
+                      <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)", marginBottom: "0.25rem" }}>Select which branches this plan grants access to:</p>
+                      {branches.map((b) => (
+                        <label key={b.id} style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+                          <input
+                            type="checkbox"
+                            name="branch_ids"
+                            value={b.id}
+                            defaultChecked={planBranchIds.includes(b.id)}
+                            style={{ width: "14px", height: "14px", accentColor: "var(--primary)", cursor: "pointer" }}
+                          />
+                          <span style={{ fontSize: "0.82rem", color: "var(--foreground)", fontWeight: 500 }}>{b.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
                 <Label htmlFor="description" style={{ fontSize: "0.8rem", fontWeight: 500 }}>

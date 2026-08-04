@@ -20,8 +20,15 @@ export default async function CheckInPage() {
   if (!gymId) redirect("/gym-admin");
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const checkInUrl = `${siteUrl}/checkin/${gymId}`;
   const isLocalhost = siteUrl.includes("localhost");
+
+  const { data: gym } = await supabase.from("gyms").select("has_branches").eq("id", gymId).single();
+
+  const { data: branches } = gym?.has_branches
+    ? await supabase.from("branches").select("id, name").eq("gym_id", gymId).eq("is_active", true).order("created_at")
+    : { data: [] };
+
+  const checkInUrl = `${siteUrl}/checkin/${gymId}`;
 
   // Today's check-ins
   const todayStart = new Date();
@@ -64,6 +71,9 @@ export default async function CheckInPage() {
         checkInUrl={checkInUrl}
         isLocalhost={isLocalhost}
         entries={entries}
+        branches={branches ?? []}
+        siteUrl={siteUrl}
+        gymId={gymId}
       />
     </>
   );

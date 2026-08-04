@@ -11,16 +11,33 @@ type CheckInEntry = {
   memberName: string;
 };
 
+type Branch = { id: string; name: string };
+
 export function CheckInDisplay({
   checkInUrl,
   isLocalhost,
   entries,
+  branches = [],
+  siteUrl = "",
+  gymId = "",
 }: {
   checkInUrl: string;
   isLocalhost: boolean;
   entries: CheckInEntry[];
+  branches?: Branch[];
+  siteUrl?: string;
+  gymId?: string;
 }) {
   const [showLog, setShowLog] = useState(false);
+  const [selectedBranchId, setSelectedBranchId] = useState<string | null>(
+    branches.length > 0 ? branches[0].id : null
+  );
+
+  const activeUrl = selectedBranchId
+    ? `${siteUrl}/checkin/${gymId}?branch=${selectedBranchId}`
+    : checkInUrl;
+
+  const activeBranchName = branches.find((b) => b.id === selectedBranchId)?.name ?? "All members";
 
   return (
     <div style={{ position: "relative", minHeight: "calc(100vh - 3.25rem)" }}>
@@ -36,6 +53,31 @@ export function CheckInDisplay({
           gap: "1.75rem",
         }}
       >
+        {branches.length > 0 && (
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "center" }}>
+            {branches.map((b) => (
+              <button
+                key={b.id}
+                onClick={() => setSelectedBranchId(b.id)}
+                style={{
+                  padding: "0.4rem 0.875rem",
+                  borderRadius: "100px",
+                  border: `1px solid ${selectedBranchId === b.id ? "var(--primary)" : "var(--border)"}`,
+                  background: selectedBranchId === b.id ? "var(--primary)" : "var(--card)",
+                  color: selectedBranchId === b.id ? "#fff" : "var(--foreground)",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "var(--font-jakarta)",
+                  transition: "all 0.15s",
+                }}
+              >
+                {b.name}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div>
           <p
             style={{
@@ -48,7 +90,7 @@ export function CheckInDisplay({
               marginBottom: "0.25rem",
             }}
           >
-            Scan to Check In
+            {branches.length > 0 ? activeBranchName : "Scan to Check In"}
           </p>
           <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", textAlign: "center" }}>
             Point your phone camera at this code
@@ -65,7 +107,7 @@ export function CheckInDisplay({
             boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
           }}
         >
-          <QRCode value={checkInUrl} size={280} level="M" style={{ display: "block" }} />
+          <QRCode value={activeUrl} size={280} level="M" style={{ display: "block" }} />
         </div>
 
         {isLocalhost && (

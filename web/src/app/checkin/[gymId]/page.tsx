@@ -4,10 +4,13 @@ import Link from "next/link";
 
 export default async function MemberCheckInPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ gymId: string }>;
+  searchParams: Promise<{ branch?: string }>;
 }) {
   const { gymId } = await params;
+  const { branch: branchId } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -42,7 +45,7 @@ export default async function MemberCheckInPage({
   // Find their membership at this gym
   const { data: member } = await supabase
     .from("gym_members")
-    .select("id, status")
+    .select("id, status, membership_plan_id")
     .eq("profile_id", user.id)
     .eq("gym_id", gymId)
     .single();
@@ -73,6 +76,38 @@ export default async function MemberCheckInPage({
         />
       </CheckInLayout>
     );
+  }
+
+  // Branch access check
+  if (branchId && member.membership_plan_id) {
+    const { data: plan } = await supabase
+      .from("membership_plans")
+      .select("branch_access")
+      .eq("id", member.membership_plan_id)
+      .single();
+
+    if (plan?.branch_access === "specific") {
+      const { data: allowed } = await supabase
+        .from("plan_branch_access")
+        .select("branch_id")
+        .eq("plan_id", member.membership_plan_id)
+        .eq("branch_id", branchId)
+        .maybeSingle();
+
+      if (!allowed) {
+        return (
+          <CheckInLayout>
+            <StatusCard
+              icon="✕"
+              iconColor="oklch(0.55 0.18 25)"
+              title="Branch not included"
+              detail="Your membership plan does not include access to this location."
+              memberName={profile?.full_name}
+            />
+          </CheckInLayout>
+        );
+      }
+    }
   }
 
   // Dedup: check for a check-in within the last 6 hours
@@ -111,6 +146,7 @@ export default async function MemberCheckInPage({
     gym_member_id: member.id,
     checked_in_at: now,
     status: "success",
+    branch_id: branchId ?? null,
   });
 
   if (error) {

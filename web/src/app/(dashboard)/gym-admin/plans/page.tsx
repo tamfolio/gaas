@@ -30,11 +30,25 @@ export default async function PlansPage() {
 
   const gymId = profile!.gym_id!;
 
-  const { data: plans } = await supabase
-    .from("membership_plans")
-    .select("id, name, description, price, duration_days, is_active")
-    .eq("gym_id", gymId)
-    .order("created_at", { ascending: false });
+  const [{ data: plans }, { data: gym }, { data: branches }, { data: planBranchRows }] = await Promise.all([
+    supabase.from("membership_plans")
+      .select("id, name, description, price, duration_days, is_active, branch_access")
+      .eq("gym_id", gymId)
+      .order("created_at", { ascending: false }),
+    supabase.from("gyms").select("has_branches").eq("id", gymId).single(),
+    supabase.from("branches").select("id, name").eq("gym_id", gymId).eq("is_active", true).order("created_at"),
+    supabase.from("plan_branch_access").select("plan_id, branch_id"),
+  ]);
+
+  const activeBranches = gym?.has_branches ? (branches ?? []) : [];
+
+  // Map plan_id → branch_ids
+  const planBranchMap = new Map<string, string[]>();
+  for (const row of planBranchRows ?? []) {
+    const existing = planBranchMap.get(row.plan_id) ?? [];
+    existing.push(row.branch_id);
+    planBranchMap.set(row.plan_id, existing);
+  }
 
   const activePlans = plans?.filter((p) => p.is_active) ?? [];
   const inactivePlans = plans?.filter((p) => !p.is_active) ?? [];
@@ -92,7 +106,7 @@ export default async function PlansPage() {
             )}
           </h1>
         </div>
-        <PlanFormSheet />
+        <PlanFormSheet branches={activeBranches} />
       </div>
 
       {/* Empty state */}
@@ -128,7 +142,7 @@ export default async function PlansPage() {
             Create a plan so members can be enrolled on one when you add them.
           </p>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <PlanFormSheet />
+            <PlanFormSheet branches={activeBranches} />
           </div>
         </div>
       )}
@@ -212,7 +226,7 @@ export default async function PlansPage() {
                           Active
                         </span>
                       </div>
-                      <PlanFormSheet plan={plan} />
+                      <PlanFormSheet plan={plan} branches={activeBranches} planBranchIds={planBranchMap.get(plan.id) ?? []} />
                     </div>
 
                     {/* Price */}
@@ -362,7 +376,7 @@ export default async function PlansPage() {
                           Inactive
                         </span>
                       </div>
-                      <PlanFormSheet plan={plan} />
+                      <PlanFormSheet plan={plan} branches={activeBranches} planBranchIds={planBranchMap.get(plan.id) ?? []} />
                     </div>
 
                     <div
