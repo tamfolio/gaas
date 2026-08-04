@@ -95,17 +95,19 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 
 ### Platform Admin (Super-Admin)
 
-> **Access model:** The super-admin panel is a separate section of the app, accessible only to accounts with the `super_admin` role. It is not part of any gym's tenant space.
+> **Access model:** Separate route group `/super-admin` within the same Next.js app, accessible only to accounts with the `platform_admin` role. Can be served on a custom subdomain (e.g. `admin.engineroom.ng`) via Vercel domain aliases with a host-based redirect in `next.config.ts`.
 
 > **Gym onboarding policy:** New gyms registered via the public sign-up form do not go live immediately. They enter a **pending approval** state and must be reviewed and approved by a super-admin before they can access the platform. This prevents unauthorised or spam tenants.
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| All gyms list (pending + active + suspended) | ⬜ Pending | separate tabs for approval queue and active tenants |
-| Approve / reject new gym registrations | ⬜ Pending | core gatekeeping flow — pending gyms cannot log in until approved |
-| Gym detail / suspend / delete | ⬜ Pending | suspend disables login for all gym users |
-| Platform-wide revenue overview | ⬜ Pending | |
-| User management (all roles) | ⬜ Pending | |
+| Register flow → pending status | ⬜ Pending | new gyms created with `pending` subscription_status; middleware blocks dashboard access until approved |
+| Dashboard stats | ⬜ Pending | total gyms, members, revenue across all tenants |
+| All gyms list | ⬜ Pending | filterable by status: pending / active / suspended |
+| Approve / reject gym registration | ⬜ Pending | approval unlocks access + notifies owner; rejection sends reason |
+| Gym detail view | ⬜ Pending | member count, trainer count, revenue, plan, date joined |
+| Suspend / reactivate gym | ⬜ Pending | blocks all users of that gym from logging in |
+| Platform revenue overview | ⬜ Pending | aggregated payments across all tenants |
 
 ---
 
@@ -164,7 +166,7 @@ Run in order in Supabase SQL Editor:
 
 Suggested order based on business impact:
 
-1. **Platform super-admin** — manage all gyms, approve new registrations, view platform-wide revenue.
+1. **Platform super-admin** — in progress (register fix → dashboard → gyms list → approve/reject → suspend → revenue).
 2. **Email notifications** — Resend for expiry alerts and onboarding emails.
 3. **Onboarding flow** — post-register wizard for new gym admins.
 4. **Trainer attendance tracking** — trainer marks member attendance per session.
