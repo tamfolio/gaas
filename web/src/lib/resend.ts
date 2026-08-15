@@ -6,6 +6,79 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
 // For local testing with a real key, use 'onboarding@resend.dev' (sends to verified addresses only).
 export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "EngineRoom <onboarding@resend.dev>";
 
+export function buildStaffApprovalRequestEmail({
+  gymName,
+  ownerName,
+  inviterName,
+  inviteeName,
+  inviteeEmail,
+  teamUrl,
+}: {
+  gymName: string;
+  ownerName: string;
+  inviterName: string;
+  inviteeName: string;
+  inviteeEmail: string;
+  teamUrl: string;
+}): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Staff Approval Required — ${gymName}</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background:#100F0E;padding:28px 32px;">
+              <div style="font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-1px;line-height:1;">
+                Engine<span style="color:#E8460A;">Room</span>
+              </div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">${gymName}</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px;">
+              <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111;letter-spacing:-0.5px;">
+                Approval required, ${ownerName}
+              </h1>
+              <p style="margin:0 0 24px;font-size:14px;color:#666;line-height:1.7;">
+                <strong>${inviterName}</strong> has invited <strong>${inviteeName}</strong> (${inviteeEmail})
+                as a <strong>Second Admin</strong> at <strong>${gymName}</strong>.
+              </p>
+              <div style="background:#fff8f0;border:1px solid #fde8cc;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+                <p style="margin:0;font-size:13px;color:#b45309;line-height:1.6;">
+                  Second Admin access grants near-full control of your gym's management panel,
+                  including members, staff, payments and settings. Only approve if you recognise this person.
+                </p>
+              </div>
+              <a href="${teamUrl}" style="display:block;background:#E8460A;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;font-size:14px;text-align:center;letter-spacing:-0.2px;">
+                Review invitation →
+              </a>
+              <p style="margin:20px 0 0;font-size:12px;color:#aaa;line-height:1.7;">
+                Log in to your EngineRoom dashboard to approve or decline.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#f8f8f8;border-top:1px solid #eee;padding:16px 32px;">
+              <p style="margin:0;font-size:11px;color:#bbb;text-align:center;">
+                Powered by EngineRoom &mdash; Gym Management Platform
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 export function buildWelcomeMemberEmail({
   gymName,
   memberName,

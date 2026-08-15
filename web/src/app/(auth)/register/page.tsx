@@ -46,6 +46,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export default function RegisterPage() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,8 +56,55 @@ export default function RegisterPage() {
       const result = await registerGym(new FormData(e.currentTarget));
       if (result?.error) {
         setError(result.error);
+      } else if (result?.pending) {
+        setSubmitted(true);
       }
     });
+  }
+
+  if (submitted) {
+    return (
+      <div style={{ textAlign: "center" }}>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "64px",
+            height: "64px",
+            borderRadius: "50%",
+            background: "color-mix(in oklch, var(--primary) 12%, transparent)",
+            border: "2px solid color-mix(in oklch, var(--primary) 28%, transparent)",
+            fontSize: "1.75rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          ✓
+        </div>
+        <h1
+          style={{
+            fontFamily: "var(--font-syne)",
+            fontSize: "1.75rem",
+            fontWeight: 800,
+            letterSpacing: "-0.04em",
+            color: "var(--foreground)",
+            lineHeight: 1.05,
+            marginBottom: "0.75rem",
+          }}
+        >
+          Application received
+        </h1>
+        <p style={{ color: "var(--muted-foreground)", fontSize: "0.9rem", lineHeight: 1.6, maxWidth: "340px", margin: "0 auto 1.5rem" }}>
+          Your gym registration is under review. We&apos;ll notify you by email once it&apos;s approved — usually within 24 hours.
+        </p>
+        <Link
+          href="/login"
+          style={{ color: "var(--primary)", fontWeight: 600, fontSize: "0.875rem", textDecoration: "none" }}
+        >
+          Back to sign in →
+        </Link>
+      </div>
+    );
   }
 
   return (

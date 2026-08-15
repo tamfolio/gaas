@@ -29,7 +29,13 @@ export async function login(formData: FormData) {
   revalidatePath("/", "layout");
 
   switch (profile?.role) {
+    case "platform_admin":
+    case "platform_staff":
+      redirect("/super-admin");
     case "gym_admin":
+    case "second_admin":
+    case "front_desk":
+    case "accountant":
       redirect("/gym-admin");
     case "trainer":
       redirect("/trainer");
@@ -52,7 +58,7 @@ export async function registerGym(formData: FormData) {
   const adminEmail = formData.get("admin_email") as string;
   const password = formData.get("password") as string;
 
-  // Create the gym first
+  // Create the gym in pending state — must be approved by a platform admin before access is granted
   const { data: gym, error: gymError } = await adminClient
     .from("gyms")
     .insert({
@@ -60,6 +66,7 @@ export async function registerGym(formData: FormData) {
       email: gymEmail,
       phone: gymPhone,
       address: gymAddress,
+      subscription_status: "pending",
     })
     .select()
     .single();
@@ -95,7 +102,7 @@ export async function registerGym(formData: FormData) {
   if (profileError) return { error: profileError.message };
 
   revalidatePath("/", "layout");
-  redirect("/gym-admin");
+  return { pending: true };
 }
 
 export async function logout() {

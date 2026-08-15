@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import {
   LayoutDashboard,
   Users,
+  Users2,
   Dumbbell,
   Tag,
   CreditCard,
@@ -19,42 +20,41 @@ import {
   X,
   ScanLine,
   GitBranch,
+  UserPlus,
 } from "lucide-react";
+import { canAccessGymNav, ROLE_LABELS } from "@/lib/permissions";
+import type { UserRole } from "@/types";
 
-const BASE_NAV_SECTIONS = [
-  {
-    label: "Manage",
-    items: [
-      { icon: LayoutDashboard, label: "Dashboard", href: "/gym-admin" },
-      { icon: Users, label: "Members", href: "/gym-admin/members" },
-      { icon: Dumbbell, label: "Trainers", href: "/gym-admin/trainers" },
-      { icon: Tag, label: "Plans", href: "/gym-admin/plans" },
-      { icon: CreditCard, label: "Payments", href: "/gym-admin/payments" },
-      { icon: Bell, label: "Notifications", href: "/gym-admin/notifications" },
-      { icon: ScanLine, label: "Check-in", href: "/gym-admin/check-in" },
-    ],
-  },
-  {
-    label: "Account",
-    items: [
-      { icon: UserCircle, label: "Profile", href: "/gym-admin/profile" },
-      { icon: Settings, label: "Settings", href: "/gym-admin/settings" },
-    ],
-  },
+const ALL_MANAGE_ITEMS = [
+  { icon: LayoutDashboard, label: "Dashboard",     href: "/gym-admin" },
+  { icon: Users,           label: "Members",       href: "/gym-admin/members" },
+  { icon: Dumbbell,        label: "Trainers",      href: "/gym-admin/trainers" },
+  { icon: Tag,             label: "Plans",         href: "/gym-admin/plans" },
+  { icon: CreditCard,      label: "Payments",      href: "/gym-admin/payments" },
+  { icon: Bell,            label: "Notifications", href: "/gym-admin/notifications" },
+  { icon: ScanLine,        label: "Check-in",      href: "/gym-admin/check-in" },
+  { icon: UserPlus,        label: "Guests",        href: "/gym-admin/guests" },
+  { icon: GitBranch,       label: "Branches",      href: "/gym-admin/branches", branchesOnly: true },
 ];
 
-function buildNavSections(hasBranches: boolean) {
-  if (!hasBranches) return BASE_NAV_SECTIONS;
+const ALL_ACCOUNT_ITEMS = [
+  { icon: UserCircle, label: "Profile",  href: "/gym-admin/profile" },
+  { icon: Users2,     label: "Team",     href: "/gym-admin/team" },
+  { icon: Settings,   label: "Settings", href: "/gym-admin/settings" },
+];
+
+function buildNavSections(hasBranches: boolean, role: UserRole) {
+  const manageItems = ALL_MANAGE_ITEMS.filter((item) => {
+    if (item.branchesOnly && !hasBranches) return false;
+    return canAccessGymNav(role, item.href);
+  });
+  const accountItems = ALL_ACCOUNT_ITEMS.filter((item) =>
+    canAccessGymNav(role, item.href)
+  );
   return [
-    {
-      ...BASE_NAV_SECTIONS[0],
-      items: [
-        ...BASE_NAV_SECTIONS[0].items,
-        { icon: GitBranch, label: "Branches", href: "/gym-admin/branches" },
-      ],
-    },
-    BASE_NAV_SECTIONS[1],
-  ];
+    { label: "Manage",  items: manageItems },
+    { label: "Account", items: accountItems },
+  ].filter((s) => s.items.length > 0);
 }
 
 function NavItem({
@@ -105,12 +105,14 @@ function SidebarInner({
   userName,
   gymName,
   hasBranches,
+  userRole,
   pathname,
   onClose,
 }: {
   userName: string;
   gymName: string;
   hasBranches: boolean;
+  userRole: UserRole;
   pathname: string;
   onClose?: () => void;
 }) {
@@ -179,7 +181,7 @@ function SidebarInner({
           gap: "1.75rem",
         }}
       >
-        {buildNavSections(hasBranches).map((section) => (
+        {buildNavSections(hasBranches, userRole).map((section) => (
           <div key={section.label}>
             <div
               style={{
@@ -261,7 +263,7 @@ function SidebarInner({
             {userName}
           </div>
           <div style={{ fontSize: "0.62rem", color: "var(--primary)", fontWeight: 500 }}>
-            Gym Admin
+            {ROLE_LABELS[userRole] ?? "Staff"}
           </div>
         </div>
 
@@ -298,10 +300,12 @@ export function GymAdminSidebar({
   userName,
   gymName,
   hasBranches,
+  userRole,
 }: {
   userName: string;
   gymName: string;
   hasBranches: boolean;
+  userRole: UserRole;
 }) {
   const pathname = usePathname();
   // Default false so SSR renders desktop sidebar (no flash on desktop)
@@ -330,7 +334,7 @@ export function GymAdminSidebar({
   if (!isMobile) {
     return (
       <div style={{ flexShrink: 0 }}>
-        <SidebarInner userName={userName} gymName={gymName} hasBranches={hasBranches} pathname={pathname} />
+        <SidebarInner userName={userName} gymName={gymName} hasBranches={hasBranches} userRole={userRole} pathname={pathname} />
       </div>
     );
   }
@@ -401,6 +405,7 @@ export function GymAdminSidebar({
               userName={userName}
               gymName={gymName}
               hasBranches={hasBranches}
+              userRole={userRole}
               pathname={pathname}
               onClose={() => setMobileOpen(false)}
             />

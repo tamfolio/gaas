@@ -55,22 +55,25 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 | Member detail / edit / remove | ✅ Done | |
 | Trainer list + add trainer | ✅ Done | |
 | Trainer detail / edit / remove | ✅ Done | |
-| Membership plans (create, edit, toggle active) | ✅ Done | branch access per plan: all branches or specific |
+| Membership plans (create, edit, toggle active) | ✅ Done | branch access per plan: all branches or specific; guest passes per month (0 = no guests) |
 | Payment log (record manual payment) | ✅ Done | |
 | Paystack payment flow (online billing) | ✅ Done | member self-pay renewal; webhook updates status |
 | QR code check-in display + live log | ✅ Done | per-branch QR codes when branches enabled; branch tab selector on check-in page |
 | Notifications (view) | ✅ Done | |
 | Notifications (create / send to members) | ✅ Done | manual announcements + automated expiry alerts (7d, 3d) |
 | Gym profile | ✅ Done | |
-| Gym settings | ✅ Done | name, phone, address editable; Features toggle for branches |
+| Gym settings | ✅ Done | name, phone, address editable; Features toggle for branches; referral reward days; subscription plan management |
 | Branches (multi-location) | ✅ Done | opt-in via Settings; per-branch QR; plan-level access control (all vs specific branches) |
+| Team management (staff invites) | ✅ Done | roles: second_admin, front_desk, accountant; second-admin invites require owner approval before link is sent; front_desk/accountant get direct magic link |
+| Guest visits log | ✅ Done | gym admin logs guest details (name, phone, email) for marketing; validates member's monthly quota; `/gym-admin/guests` |
+| Referral settings | ✅ Done | configurable reward days per referral in Settings; applies across the gym |
 
 ---
 
 ### Member
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Dashboard (membership status, quick actions) | ✅ Done | |
+| Dashboard (membership status, quick actions) | ✅ Done | referral code card + guest passes remaining (if plan allows) |
 | Check-in history (list) | ✅ Done | |
 | Check-in calendar | ✅ Done | monthly calendar with day highlights + month navigation |
 | QR check-in (scan gym QR to check in) | ✅ Done | deduplicates within 6 hours |
@@ -79,6 +82,7 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 | Workout timer (in-app countdown / stopwatch) | ✅ Done | floating panel; stopwatch + rest timer modes |
 | Notifications (view) | ✅ Done | |
 | Member profile / edit | ✅ Done | |
+| Referral page | ✅ Done | unique 6-char code; stats (referred, converted, days earned); how-it-works steps; `/member/referral` |
 
 ---
 
@@ -101,7 +105,8 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Register flow → pending status | ⬜ Pending | new gyms created with `pending` subscription_status; middleware blocks dashboard access until approved |
+| Register flow → pending status | ✅ Done | new gyms created with `pending` subscription_status; middleware blocks dashboard access until approved; `/pending` holding page shown |
+| Platform team management | ✅ Done | invite/remove platform staff; direct magic link (no approval tier needed) |
 | Dashboard stats | ⬜ Pending | total gyms, members, revenue across all tenants |
 | All gyms list | ⬜ Pending | filterable by status: pending / active / suspended |
 | Approve / reject gym registration | ⬜ Pending | approval unlocks access + notifies owner; rejection sends reason |
@@ -159,6 +164,10 @@ Run in order in Supabase SQL Editor:
 | `supabase/schema.sql` | Full schema — use for fresh setup |
 | `supabase/migrations/002_branches.sql` | Branches + plan branch access + check-in branch tracking |
 | `supabase/migrations/003_gyms_has_branches.sql` | `has_branches` feature flag on gyms table |
+| `supabase/migrations/004_gym_pending_status.sql` | Gym pending approval status; middleware blocks access until approved |
+| `supabase/migrations/005_roles_and_permissions.sql` | Staff roles (second_admin, front_desk, accountant), `gym_staff_invites` table, RLS policies, `staff_invite` notification type |
+| `supabase/migrations/006_referrals_and_guests.sql` | `referral_codes`, `referrals`, `guest_visits` tables; `referral_reward_days` on gyms; `guest_passes_per_month` on plans |
+| `supabase/migrations/007_gym_subscriptions.sql` | `platform_plans` table (seeded with placeholder prices), `gym_subscription_payments` table; `subscription_expires_at` + `subscription_period` on gyms |
 
 ---
 
@@ -166,10 +175,12 @@ Run in order in Supabase SQL Editor:
 
 Suggested order based on business impact:
 
-1. **Platform super-admin** — in progress (register fix → dashboard → gyms list → approve/reject → suspend → revenue).
-2. **Email notifications** — Resend for expiry alerts and onboarding emails.
+1. **Platform super-admin dashboard** — pending status + team done; next: gyms list → approve/reject gym → gym detail → suspend → revenue overview.
+2. **Referral / guest visits** — ✅ built; referral conversion happens on first payment (Paystack webhook + manual); guest visits logged by gym admin for marketing.
+3. **Gym subscription payments** — ✅ built; pricing in DB (update via Supabase); Paystack flow; 7-day grace period cron; suspended page with renew form.
 3. **Onboarding flow** — post-register wizard for new gym admins.
-4. **Trainer attendance tracking** — trainer marks member attendance per session.
+4. **Email notifications** — Resend for expiry alerts and onboarding emails.
+5. **Trainer attendance tracking** — trainer marks member attendance per session.
 
 ---
 

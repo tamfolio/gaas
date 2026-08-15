@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyWebhookSignature } from "@/lib/paystack/client";
 import { createAdminClient } from "@/lib/supabase/server";
+import { convertReferralOnFirstPayment } from "@/lib/referrals";
 
 type ChargeData = {
   reference: string;
   amount: number; // in kobo
   status: string;
   metadata?: {
+    payment_type?: string;
     gym_member_id?: string;
     gym_id?: string;
     plan_id?: string;
     plan_duration_days?: number;
+    plan?: string;
+    period?: string;
+    amount?: number;
   };
   customer: { email: string };
 };
@@ -26,7 +31,11 @@ export async function POST(request: NextRequest) {
   const event = JSON.parse(body) as { event: string; data: ChargeData };
 
   if (event.event === "charge.success") {
-    await handleChargeSuccess(event.data);
+    if (event.data.metadata?.payment_type === "gym_subscription") {
+      await handleGymSubscription(event.data);
+    } else {
+      await handleChargeSuccess(event.data);
+    }
   }
 
   // Always return 200 so Paystack stops retrying
@@ -83,4 +92,68 @@ async function handleChargeSuccess(data: ChargeData) {
     .from("gym_members")
     .update({ status: "active", start_date: startDate, end_date: endDate })
     .eq("id", gymMemberId);
+
+  // Resolve gym_id for referral conversion
+  const gymId = metadata?.gym_id ?? (await adminClient
+    .from("gym_members")
+    .select("gym_id")
+    .eq("id", gymMemberId)
+    .single()
+    .then((r) => r.data?.gym_id));
+
+  if (gymId) {
+    await convertReferralOnFirstPayment(gymMemberId, gymId);
+  }
+}
+
+async function handleGymSubscription(data: ChargeData) {
+  const { reference, metadata } = data;
+  const adminClient = createAdminClient();
+
+  const { data: payment } = await adminClient
+    .from("gym_subscription_payments")
+    .select("id, status, gym_id, plan, period, amount")
+    .eq("paystack_reference", reference)
+    .maybeSingle();
+
+  if (payment?.status === "paid") return;
+
+  const gymId = payment?.gym_id ?? metadata?.gym_id;
+  const plan = payment?.plan ?? metadata?.plan;
+  const period = payment?.period ?? metadata?.period;
+
+  if (!gymId || !plan || !period) return;
+
+  const now = new Date();
+  const periodStart = now.toISOString().split("T")[0];
+  const periodEnd = new Date(now);
+  if (period === "annual") {
+    periodEnd.setFullYear(periodEnd.getFullYear() + 1);
+  } else {
+    periodEnd.setMonth(periodEnd.getMonth() + 6);
+  }
+  const expiresAt = periodEnd.toISOString();
+  const periodEndStr = periodEnd.toISOString().split("T")[0];
+
+  if (payment) {
+    await adminClient
+      .from("gym_subscription_payments")
+      .update({
+        status: "paid",
+        paid_at: now.toISOString(),
+        period_start: periodStart,
+        period_end: periodEndStr,
+      })
+      .eq("id", payment.id);
+  }
+
+  await adminClient
+    .from("gyms")
+    .update({
+      subscription_status: "active",
+      subscription_plan: plan,
+      subscription_period: period,
+      subscription_expires_at: expiresAt,
+    })
+    .eq("id", gymId);
 }

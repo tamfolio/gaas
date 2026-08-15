@@ -1,4 +1,12 @@
-export type UserRole = "platform_admin" | "gym_admin" | "trainer" | "member";
+export type UserRole =
+  | "platform_admin"
+  | "platform_staff"
+  | "gym_admin"
+  | "second_admin"
+  | "front_desk"
+  | "accountant"
+  | "trainer"
+  | "member";
 
 export type MembershipStatus = "active" | "expired" | "suspended" | "pending";
 
@@ -14,6 +22,7 @@ export interface Gym {
   subscription_status: "active" | "trial" | "suspended" | "cancelled";
   subscription_plan: "basic" | "pro" | "enterprise";
   paystack_customer_code: string | null;
+  referral_reward_days: number;
   created_at: string;
 }
 
@@ -60,6 +69,7 @@ export interface MembershipPlan {
   price: number;
   duration_days: number;
   is_active: boolean;
+  guest_passes_per_month: number;
   created_at: string;
 }
 
@@ -113,9 +123,21 @@ export interface Notification {
   profile_id: string | null;
   title: string;
   body: string;
-  type: "announcement" | "payment" | "membership" | "workout" | "checkin";
+  type: "announcement" | "payment" | "membership" | "workout" | "checkin" | "staff_invite" | "expiry_7d" | "expiry_3d";
   is_read: boolean;
   created_at: string;
+}
+
+export interface GymStaffInvite {
+  id: string;
+  gym_id: string;
+  email: string;
+  full_name: string;
+  role: "second_admin" | "front_desk" | "accountant";
+  invited_by: string;
+  status: "pending_owner_approval" | "pending_acceptance";
+  created_at: string;
+  inviter?: Profile;
 }
 
 export interface Payment {
@@ -129,6 +151,37 @@ export interface Payment {
   description: string;
   paid_at: string | null;
   created_at: string;
+}
+
+export interface ReferralCode {
+  id: string;
+  gym_id: string;
+  member_id: string;
+  code: string;
+  created_at: string;
+}
+
+export interface Referral {
+  id: string;
+  gym_id: string;
+  referrer_member_id: string;
+  referred_member_id: string;
+  status: "pending" | "converted";
+  days_awarded: number | null;
+  converted_at: string | null;
+  created_at: string;
+}
+
+export interface GuestVisit {
+  id: string;
+  gym_id: string;
+  member_id: string;
+  guest_name: string;
+  guest_phone: string | null;
+  guest_email: string | null;
+  visited_at: string;
+  created_at: string;
+  member?: GymMember;
 }
 
 export interface BMIRecord {

@@ -378,6 +378,32 @@ export function AddMemberSheet({
               {/* Divider */}
               <div style={{ borderTop: "1px solid var(--border)" }} />
 
+              {/* ── Referral ── */}
+              <div>
+                <p style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted-foreground)", marginBottom: "0.875rem" }}>
+                  Referral (optional)
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+                  <Label htmlFor="referral_code" style={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                    Referred by code
+                  </Label>
+                  <Input
+                    id="referral_code"
+                    name="referral_code"
+                    placeholder="e.g. KFIT4X"
+                    maxLength={6}
+                    style={{ textTransform: "uppercase", letterSpacing: "0.1em" }}
+                    className="h-10"
+                  />
+                  <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>
+                    If another member referred this person, enter their 6-character code.
+                  </p>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ borderTop: "1px solid var(--border)" }} />
+
               {/* Email notice */}
               <div
                 style={{

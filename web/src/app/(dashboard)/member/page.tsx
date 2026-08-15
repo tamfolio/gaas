@@ -73,7 +73,7 @@ export default async function MemberPage() {
   const [{ data: memberRecord }, { data: gym }] = await Promise.all([
     supabase
       .from("gym_members")
-      .select("id, status, start_date, end_date, membership_plan:membership_plans(name, price)")
+      .select("id, status, start_date, end_date, membership_plan:membership_plans(name, price, guest_passes_per_month)")
       .eq("gym_id", profile.gym_id)
       .eq("profile_id", user.id)
       .single(),
@@ -88,6 +88,34 @@ export default async function MemberPage() {
         .eq("gym_member_id", memberRecord.id)
         .eq("status", "success")
     : { count: 0 };
+
+  const plan = memberRecord?.membership_plan as { name?: string; price?: number; guest_passes_per_month?: number } | null;
+  const guestPassesPerMonth = plan?.guest_passes_per_month ?? 0;
+
+  // Count guest visits used this month (only if plan allows guests)
+  let guestPassesUsed = 0;
+  if (memberRecord && guestPassesPerMonth > 0) {
+    const now = new Date();
+    const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+    const { count } = await supabase
+      .from("guest_visits")
+      .select("*", { count: "exact", head: true })
+      .eq("member_id", memberRecord.id)
+      .gte("visited_at", monthStart);
+    guestPassesUsed = count ?? 0;
+  }
+
+  // Referral stats
+  let referralCode: string | null = null;
+  let convertedReferrals = 0;
+  if (memberRecord) {
+    const [{ data: codeRecord }, { data: referrals }] = await Promise.all([
+      supabase.from("referral_codes").select("code").eq("member_id", memberRecord.id).maybeSingle(),
+      supabase.from("referrals").select("status").eq("referrer_member_id", memberRecord.id),
+    ]);
+    referralCode = codeRecord?.code ?? null;
+    convertedReferrals = referrals?.filter((r) => r.status === "converted").length ?? 0;
+  }
 
   const status = (memberRecord?.status ?? "pending") as MembershipStatus;
   const statusStyle = STATUS_STYLES[status];
@@ -159,7 +187,7 @@ export default async function MemberPage() {
                 Membership
               </p>
               <p style={{ fontFamily: "var(--font-syne)", fontSize: "1.1rem", fontWeight: 700, color: "var(--brand-dark-fg)", letterSpacing: "-0.02em" }}>
-                {(memberRecord?.membership_plan as { name?: string } | null)?.name ?? "Standard"}
+                {plan?.name ?? "Standard"}
               </p>
             </div>
             <span
@@ -226,6 +254,82 @@ export default async function MemberPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Referral + Guest pass cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.875rem", marginBottom: "1.5rem" }}>
+        {/* Referral card */}
+        <a
+          href="/member/referral"
+          style={{ textDecoration: "none" }}
+        >
+          <div
+            style={{
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "0.75rem",
+              padding: "1.125rem",
+              cursor: "pointer",
+            }}
+          >
+            <p style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--muted-foreground)", marginBottom: "0.5rem" }}>
+              Referrals
+            </p>
+            <div style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, color: "var(--foreground)", letterSpacing: referralCode ? "0.1em" : "-0.03em", lineHeight: 1, marginBottom: "0.3rem" }}>
+              {referralCode ?? "Get code"}
+            </div>
+            <p style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>
+              {convertedReferrals > 0
+                ? `${convertedReferrals} successful referral${convertedReferrals !== 1 ? "s" : ""}`
+                : "Share to earn free days"}
+            </p>
+          </div>
+        </a>
+
+        {/* Guest passes card — only shown if plan includes guests */}
+        {guestPassesPerMonth > 0 ? (
+          <div
+            style={{
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "0.75rem",
+              padding: "1.125rem",
+            }}
+          >
+            <p style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--muted-foreground)", marginBottom: "0.5rem" }}>
+              Guest passes
+            </p>
+            <div style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, color: "var(--foreground)", letterSpacing: "-0.03em", lineHeight: 1, marginBottom: "0.3rem" }}>
+              {guestPassesPerMonth - guestPassesUsed}
+              <span style={{ fontSize: "0.9rem", fontWeight: 500, color: "var(--muted-foreground)", marginLeft: "0.25rem" }}>
+                / {guestPassesPerMonth}
+              </span>
+            </div>
+            <p style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>
+              Remaining this month
+            </p>
+          </div>
+        ) : (
+          <div
+            style={{
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "0.75rem",
+              padding: "1.125rem",
+              opacity: 0.5,
+            }}
+          >
+            <p style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--muted-foreground)", marginBottom: "0.5rem" }}>
+              Guest passes
+            </p>
+            <div style={{ fontFamily: "var(--font-syne)", fontSize: "1rem", fontWeight: 700, color: "var(--muted-foreground)", lineHeight: 1, marginBottom: "0.3rem" }}>
+              Not included
+            </div>
+            <p style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>
+              Upgrade your plan to bring guests
+            </p>
+          </div>
+        )}
       </div>
 
       <div style={{ marginBottom: "1.25rem" }}>

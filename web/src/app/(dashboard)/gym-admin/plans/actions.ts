@@ -29,6 +29,7 @@ export async function createPlan(formData: FormData) {
   const duration_days = parseInt(formData.get("duration_days") as string, 10);
   const branch_access = (formData.get("branch_access") as string) || "all";
   const branch_ids = formData.getAll("branch_ids") as string[];
+  const guest_passes_per_month = parseInt(formData.get("guest_passes_per_month") as string, 10) || 0;
 
   if (!name || isNaN(price) || price < 0 || isNaN(duration_days) || duration_days < 1) {
     return { error: "Name, price, and duration are required." };
@@ -36,7 +37,7 @@ export async function createPlan(formData: FormData) {
 
   const { data: plan, error } = await adminClient
     .from("membership_plans")
-    .insert({ gym_id: gymId, name, description, price, duration_days, is_active: true, branch_access })
+    .insert({ gym_id: gymId, name, description, price, duration_days, is_active: true, branch_access, guest_passes_per_month })
     .select("id")
     .single();
 
@@ -64,6 +65,7 @@ export async function updatePlan(planId: string, formData: FormData) {
   const duration_days = parseInt(formData.get("duration_days") as string, 10);
   const branch_access = (formData.get("branch_access") as string) || "all";
   const branch_ids = formData.getAll("branch_ids") as string[];
+  const guest_passes_per_month = parseInt(formData.get("guest_passes_per_month") as string, 10) || 0;
 
   if (!name || isNaN(price) || price < 0 || isNaN(duration_days) || duration_days < 1) {
     return { error: "Name, price, and duration are required." };
@@ -71,7 +73,7 @@ export async function updatePlan(planId: string, formData: FormData) {
 
   const { error } = await adminClient
     .from("membership_plans")
-    .update({ name, description, price, duration_days, branch_access })
+    .update({ name, description, price, duration_days, branch_access, guest_passes_per_month })
     .eq("id", planId)
     .eq("gym_id", gymId);
 

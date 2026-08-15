@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { resend, FROM_EMAIL, buildWelcomeMemberEmail } from "@/lib/resend";
+import { convertReferralOnFirstPayment } from "@/lib/referrals";
 
 function generateBarcode() {
   return `ER${Date.now().toString(36).toUpperCase()}${Math.random()
@@ -35,6 +36,7 @@ export async function addMember(formData: FormData) {
   const paymentMethod = (formData.get("payment_method") as string) || "none";
   const paymentAmount = parseFloat(formData.get("payment_amount") as string) || 0;
   const paymentReference = (formData.get("payment_reference") as string) || null;
+  const referralCode = (formData.get("referral_code") as string)?.trim().toUpperCase() || null;
 
   const paid = paymentMethod !== "none" && paymentAmount > 0;
   const memberStatus = paid ? "active" : "pending";
@@ -114,6 +116,30 @@ export async function addMember(formData: FormData) {
       description: `${planName} membership`,
       paid_at: startDate,
     });
+  }
+
+  // Link referral if a code was provided
+  if (referralCode) {
+    const { data: codeRecord } = await adminClient
+      .from("referral_codes")
+      .select("member_id, gym_id")
+      .eq("code", referralCode)
+      .eq("gym_id", gymId)
+      .maybeSingle();
+
+    if (codeRecord) {
+      await adminClient.from("referrals").insert({
+        gym_id: gymId,
+        referrer_member_id: codeRecord.member_id,
+        referred_member_id: memberData.id,
+        status: "pending",
+      });
+    }
+  }
+
+  // Convert referral immediately if payment was recorded now
+  if (paid) {
+    await convertReferralOnFirstPayment(memberData.id, gymId);
   }
 
   // Send welcome email — best-effort, don't fail the whole action if email fails

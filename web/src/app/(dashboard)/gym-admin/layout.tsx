@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { GymAdminSidebar } from "@/components/gym-admin-sidebar";
+import type { UserRole } from "@/types";
 
 export default async function GymAdminLayout({
   children,
@@ -20,12 +21,13 @@ export default async function GymAdminLayout({
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "gym_admin") redirect("/login");
+  const GYM_STAFF_ROLES = ["gym_admin", "second_admin", "front_desk", "accountant"];
+  if (!profile || !GYM_STAFF_ROLES.includes(profile.role) || !profile.gym_id) redirect("/login");
 
   const { data: gym } = await supabase
     .from("gyms")
     .select("name, has_branches")
-    .eq("id", profile.gym_id)
+    .eq("id", profile.gym_id!)
     .single();
 
   return (
@@ -40,6 +42,7 @@ export default async function GymAdminLayout({
         userName={profile.full_name ?? user.email ?? ""}
         gymName={gym?.name ?? "Your Gym"}
         hasBranches={gym?.has_branches ?? false}
+        userRole={profile.role as UserRole}
       />
       <main
         id="dash-main"

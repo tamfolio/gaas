@@ -14,6 +14,7 @@ type Plan = {
   price: number;
   duration_days: number;
   branch_access: string;
+  guest_passes_per_month?: number;
 };
 
 type Branch = { id: string; name: string };
@@ -435,6 +436,28 @@ export function PlanFormSheet({
                   )}
                 </div>
               )}
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+                <Label htmlFor="guest_passes_per_month" style={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                  Guest passes per month
+                </Label>
+                <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>
+                  How many guests a member on this plan can bring per month. Set to 0 to disallow guests.
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                  <Input
+                    id="guest_passes_per_month"
+                    name="guest_passes_per_month"
+                    type="number"
+                    min="0"
+                    max="20"
+                    defaultValue={plan?.guest_passes_per_month ?? 0}
+                    style={{ width: "90px" }}
+                    className="h-10"
+                  />
+                  <span style={{ fontSize: "0.82rem", color: "var(--muted-foreground)" }}>passes / month</span>
+                </div>
+              </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
                 <Label htmlFor="description" style={{ fontSize: "0.8rem", fontWeight: 500 }}>
