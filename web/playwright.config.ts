@@ -1,6 +1,11 @@
 import { defineConfig } from "@playwright/test";
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.test" });
+import { existsSync } from "fs";
+
+// Load .env.test when running locally (Node 20.12+ built-in)
+if (existsSync(".env.test")) {
+  (process as NodeJS.Process & { loadEnvFile?: (path: string) => void })
+    .loadEnvFile?.(".env.test");
+}
 
 export default defineConfig({
   testDir: "./tests/e2e",
