@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS platform_plans (
   display_name    text     NOT NULL,
   price_halfyear  integer  NOT NULL,
   price_annual    integer  NOT NULL,
+  
   member_limit    integer,           -- null = unlimited
   branch_limit    integer,           -- null = unlimited
   features        text[]   NOT NULL DEFAULT '{}',
