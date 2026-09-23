@@ -120,11 +120,14 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 | Feature | Status | Notes |
 |---------|--------|-------|
 | PWA (installable, offline support) | ✅ Done | manifest, service worker, offline page, iOS meta tags; `start_url` → `/login` |
+| Web Push Notifications | ✅ Done | VAPID keys, `push_subscriptions` table, subscribe API, service worker push+click handlers, `usePushNotifications` hook mounted in dashboard layout; wired into all crons + staff approval + announcements |
 | Password visibility toggle | ✅ Done | eye icon on all password fields |
 | Paystack webhook endpoint | ✅ Done | |
 | Exercise library (wger) | ✅ Done | seeded via `/api/admin/seed-exercises`; searchable by trainers |
 | Email — member welcome (Resend) | ✅ Done | sent on `addMember`; includes temp password + login link |
 | Email — trainer invite (Supabase) | ✅ Done | `inviteUserByEmail`; redirects to `/trainer` on accept |
+| Email module (nodemailer/Gmail) | ✅ Done | 6 templates: welcome member, staff approval, member expiry (7d/3d), gym subscription expiry (7d/3d), gym suspended, missed you; see `EMAIL_MODULE_README.md` |
+| Re-engagement cron (missed-you) | ✅ Done | fires at 10am daily; emails active members who haven't checked in for exactly 5 days; deduped via notifications table |
 | Onboarding flow (post-register wizard) | ⬜ Pending | |
 
 ---
@@ -137,8 +140,11 @@ These need to be added to Vercel before the related features work in production:
 |----------|-------|-----|
 | `CRON_SECRET` | Vercel env vars | Secures `/api/cron/expiry-notifications`. Without it, automated expiry alerts return 401 and never fire. |
 | `NEXT_PUBLIC_SITE_URL` | Vercel env vars | Set to `https://gaas-web-chi.vercel.app`. Used in invite/email redirect URLs. Without it, invite links fall back to localhost and fail in production. |
-| `RESEND_API_KEY` | Vercel env vars | Required for member welcome emails to send. |
-| `RESEND_FROM_EMAIL` | Vercel env vars | From address — must match a verified Resend domain. Use `EngineRoom <onboarding@resend.dev>` for testing (sends to verified addresses only). |
+| `SENDER_MAIL` | Vercel env vars | Gmail address used to send emails — `theengineroommail@gmail.com` |
+| `SENDER_PASS` | Vercel env vars | Gmail App Password (Google Account → Security → 2-Step Verification → App passwords). Not your regular Gmail password. |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Vercel env vars | VAPID public key for web push — already generated, see `.env.local` |
+| `VAPID_PRIVATE_KEY` | Vercel env vars | VAPID private key for web push — already generated, see `.env.local` |
+| `VAPID_MAILTO` | Vercel env vars | `mailto:theengineroommail@gmail.com` |
 
 ---
 
@@ -168,6 +174,8 @@ Run in order in Supabase SQL Editor:
 | `supabase/migrations/005_roles_and_permissions.sql` | Staff roles (second_admin, front_desk, accountant), `gym_staff_invites` table, RLS policies, `staff_invite` notification type |
 | `supabase/migrations/006_referrals_and_guests.sql` | `referral_codes`, `referrals`, `guest_visits` tables; `referral_reward_days` on gyms; `guest_passes_per_month` on plans |
 | `supabase/migrations/007_gym_subscriptions.sql` | `platform_plans` table (seeded with placeholder prices), `gym_subscription_payments` table; `subscription_expires_at` + `subscription_period` on gyms |
+| `supabase/migrations/008_missed_you_notification_type.sql` | Adds `missed_you` to the notifications type check constraint |
+| `supabase/migrations/009_push_subscriptions.sql` | `push_subscriptions` table with RLS — one row per browser/device per user |
 
 ---
 
@@ -201,8 +209,8 @@ SUPABASE_SERVICE_ROLE_KEY=
 PAYSTACK_SECRET_KEY=
 NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=
 ANTHROPIC_API_KEY=
-RESEND_API_KEY=
-RESEND_FROM_EMAIL=EngineRoom <onboarding@resend.dev>
+SENDER_MAIL=yourapp@gmail.com
+SENDER_PASS=your-gmail-app-password
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 CRON_SECRET=
 ```

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { sendMail, buildGymSubscriptionExpiryEmail, buildGymSuspendedEmail } from "@/lib/email";
+import { sendPushToProfile } from "@/lib/push";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
       // Find the gym admin profile
       const { data: admin } = await adminClient
         .from("profiles")
-        .select("id")
+        .select("id, full_name, email")
         .eq("gym_id", gym.id)
         .eq("role", "gym_admin")
         .maybeSingle();
@@ -72,6 +74,27 @@ export async function GET(request: NextRequest) {
         is_read: false,
       });
 
+      await sendPushToProfile(adminClient, admin.id, {
+        title: `Subscription expiring in ${threshold.label}`,
+        body:  `Your EngineRoom subscription for ${gym.name} expires in ${threshold.label}. Renew now.`,
+        url:   "/gym-admin/settings",
+      }).catch(() => null);
+
+      if (admin.email) {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+        await sendMail({
+          to: admin.email,
+          subject: `Your EngineRoom subscription for ${gym.name} expires in ${threshold.label}`,
+          html: buildGymSubscriptionExpiryEmail({
+            gymName:    gym.name,
+            ownerName:  admin.full_name ?? "there",
+            expiryDate,
+            daysLeft:   threshold.days as 7 | 3,
+            renewUrl:   `${siteUrl}/gym-admin/settings`,
+          }),
+        }).catch(() => null);
+      }
+
       warned++;
     }
   }
@@ -94,12 +117,14 @@ export async function GET(request: NextRequest) {
     // Notify gym admin
     const { data: admin } = await adminClient
       .from("profiles")
-      .select("id")
+      .select("id, full_name, email")
       .eq("gym_id", gym.id)
       .eq("role", "gym_admin")
       .maybeSingle();
 
     if (admin) {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
       await adminClient.from("notifications").insert({
         gym_id: gym.id,
         profile_id: admin.id,
@@ -108,6 +133,24 @@ export async function GET(request: NextRequest) {
         type: "membership",
         is_read: false,
       });
+
+      await sendPushToProfile(adminClient, admin.id, {
+        title: "Gym suspended",
+        body:  `${gym.name} has been suspended. Renew your subscription to restore access.`,
+        url:   "/gym-admin/settings",
+      }).catch(() => null);
+
+      if (admin.email) {
+        await sendMail({
+          to: admin.email,
+          subject: `${gym.name} has been suspended — renew to restore access`,
+          html: buildGymSuspendedEmail({
+            gymName:   gym.name,
+            ownerName: admin.full_name ?? "there",
+            renewUrl:  `${siteUrl}/gym-admin/settings`,
+          }),
+        }).catch(() => null);
+      }
     }
 
     suspended++;

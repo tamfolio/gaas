@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/server";
-import { resend, FROM_EMAIL, buildStaffApprovalRequestEmail } from "@/lib/resend";
+import { sendMail, buildStaffApprovalRequestEmail } from "@/lib/email";
+import { sendPushToProfile } from "@/lib/push";
 import { requiresOwnerApproval } from "@/lib/permissions";
 import type { GymStaffRole } from "@/lib/permissions";
 
@@ -95,10 +96,16 @@ export async function inviteStaff(formData: FormData) {
         type:       "staff_invite",
       });
 
+      // Push notification
+      await sendPushToProfile(adminClient, owner.id, {
+        title: "Staff approval required",
+        body:  `${inviter.full_name ?? "A second admin"} invited ${fullName} as Second Admin. Tap to review.`,
+        url:   "/gym-admin/team",
+      }).catch(() => null);
+
       // Email notification
       if (owner.email) {
-        await resend.emails.send({
-          from:    FROM_EMAIL,
+        await sendMail({
           to:      owner.email,
           subject: `Staff Approval Required — ${fullName} invited as Second Admin`,
           html:    buildStaffApprovalRequestEmail({

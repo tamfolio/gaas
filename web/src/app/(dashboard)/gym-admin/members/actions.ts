@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { resend, FROM_EMAIL, buildWelcomeMemberEmail } from "@/lib/resend";
+import { sendMail, buildWelcomeMemberEmail } from "@/lib/email";
 import { convertReferralOnFirstPayment } from "@/lib/referrals";
 
 function generateBarcode() {
@@ -149,9 +149,8 @@ export async function addMember(formData: FormData) {
     .eq("id", gymId)
     .single();
 
-  await resend.emails.send({
-    from: FROM_EMAIL,
-    to: [email],
+  await sendMail({
+    to: email,
     subject: `Welcome to ${gym?.name ?? "your gym"} — your EngineRoom login details`,
     html: buildWelcomeMemberEmail({
       gymName: gym?.name ?? "your gym",
@@ -352,20 +351,21 @@ export async function resendMemberInvite(profileId: string, email: string, gymId
 
   const loginUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/login`;
 
-  const { error: emailError } = await resend.emails.send({
-    from: FROM_EMAIL,
-    to: [email],
-    subject: `Your login details for ${gym?.name ?? "your gym"} — EngineRoom`,
-    html: buildWelcomeMemberEmail({
-      gymName: gym?.name ?? "your gym",
-      memberName: profile?.full_name ?? email,
-      email,
-      tempPassword: newPassword,
-      loginUrl,
-    }),
-  });
-
-  if (emailError) return { error: "Password reset but email failed to send." };
+  try {
+    await sendMail({
+      to: email,
+      subject: `Your login details for ${gym?.name ?? "your gym"} — EngineRoom`,
+      html: buildWelcomeMemberEmail({
+        gymName: gym?.name ?? "your gym",
+        memberName: profile?.full_name ?? email,
+        email,
+        tempPassword: newPassword,
+        loginUrl,
+      }),
+    });
+  } catch {
+    return { error: "Password reset but email failed to send." };
+  }
 
   return { success: true };
 }

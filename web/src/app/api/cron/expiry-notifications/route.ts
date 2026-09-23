@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { sendMail, buildMemberExpiryEmail } from "@/lib/email";
+import { sendPushToProfile } from "@/lib/push";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -29,7 +31,7 @@ export async function GET(request: NextRequest) {
   for (const target of targets) {
     const { data: expiring } = await adminClient
       .from("gym_members")
-      .select("id, gym_id, profile_id, end_date, profiles:profile_id(full_name)")
+      .select("id, gym_id, profile_id, end_date, profiles:profile_id(full_name, email)")
       .eq("end_date", target.date)
       .eq("status", "active");
 
@@ -38,7 +40,7 @@ export async function GET(request: NextRequest) {
     for (const member of expiring) {
       const profileId = member.profile_id as string;
       const gymId = member.gym_id as string;
-      const profile = member.profiles as unknown as { full_name: string } | null;
+      const profile = member.profiles as unknown as { full_name: string; email: string } | null;
       const name = profile?.full_name ?? "Member";
       const endDate = new Date(member.end_date).toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" });
 
@@ -64,6 +66,28 @@ export async function GET(request: NextRequest) {
         type: target.type,
         is_read: false,
       });
+
+      const daysLeft = target.type === "expiry_7d" ? 7 : 3;
+
+      await sendPushToProfile(adminClient, profileId, {
+        title: "Membership expiring soon",
+        body:  `Your membership expires in ${daysLeft} days. Tap to renew.`,
+        url:   "/member/dashboard",
+      }).catch(() => null);
+
+      if (profile?.email) {
+        await sendMail({
+          to:      profile.email,
+          subject: `Your membership expires in ${daysLeft} days — renew now`,
+          html:    buildMemberExpiryEmail({
+            memberName: name,
+            gymName: "your gym",
+            expiryDate: endDate,
+            daysLeft,
+            loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/login`,
+          }),
+        }).catch(() => null);
+      }
 
       sent++;
     }
