@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# Malware blocker pre-commit hook
+# Blocks commits containing C2 indicators, obfuscated payloads, or attacker-injected files
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+FAIL=0
+
+warn()  { echo -e "${YELLOW}[WARN]${NC}  $1"; }
+block() { echo -e "${RED}[BLOCK]${NC} $1"; FAIL=1; }
+
+# Staged files only (exclude deleted files)
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+echo "Running malware scan on staged files..."
+
+# ── 1. Known C2 IP addresses ────────────────────────────────────────────────
+C2_IPS="91\.218\.183\.174"
+
+while IFS= read -r file; do
+  if git show ":$file" 2>/dev/null | grep -qE "$C2_IPS"; then
+    block "C2 IP address found in: $file"
+  fi
+done <<< "$STAGED"
+
+# ── 2. Malware version / campaign strings ───────────────────────────────────
+# Split to avoid self-detection
+_C1="A8-240"; _C2="1-2"
+CAMPAIGN_STRINGS="${_C1}${_C2}|8-240${_C2}"
+
+while IFS= read -r file; do
+  if git show ":$file" 2>/dev/null | grep -qE "$CAMPAIGN_STRINGS"; then
+    block "Malware campaign string found in: $file"
+  fi
+done <<< "$STAGED"
+
+# ── 3. Obfuscated Python payload patterns ───────────────────────────────────
+OBFUSCATED="exec\(compile\(|zlib\.decompress\(base64|urlopen.*Request\._V="
+
+while IFS= read -r file; do
+  if [[ "$file" == *.py ]] || [[ "$file" == *.js ]] || [[ "$file" == *.mjs ]] || [[ "$file" == *.ts ]]; then
+    if git show ":$file" 2>/dev/null | grep -qE "$OBFUSCATED"; then
+      block "Obfuscated payload pattern found in: $file"
+    fi
+  fi
+done <<< "$STAGED"
+
+# ── 4. Node.js require-hook injection pattern ────────────────────────────────
+REQUIRE_HOOK="global\[.!\.|_resolveFilename|Module\._resolveFilename.*original"
+
+while IFS= read -r file; do
+  if [[ "$file" == *.js ]] || [[ "$file" == *.mjs ]] || [[ "$file" == *.cjs ]]; then
+    if git show ":$file" 2>/dev/null | grep -qE "$REQUIRE_HOOK"; then
+      block "Node.js require-hook injection found in: $file"
+    fi
+  fi
+done <<< "$STAGED"
+
+# ── 5. Suspicious base64 blobs (long encoded payloads) ──────────────────────
+while IFS= read -r file; do
+  if [[ "$file" == *.js ]] || [[ "$file" == *.mjs ]] || [[ "$file" == *.py ]]; then
+    if git show ":$file" 2>/dev/null | grep -qE "eNr[A-Za-z0-9+/]{40,}"; then
+      block "Suspicious base64/zlib payload found in: $file"
+    fi
+  fi
+done <<< "$STAGED"
+
+# ── 6. Attacker .gitignore entries ──────────────────────────────────────────
+ATTACKER_ENTRIES="temp_auto_push|temp_interactive_push|branch_structure\.json|Out-File.*gitignore"
+
+while IFS= read -r file; do
+  if [[ "$file" == *".gitignore" ]]; then
+    if git show ":$file" 2>/dev/null | grep -qE "$ATTACKER_ENTRIES"; then
+      block "Attacker-injected entry found in: $file"
+    fi
+  fi
+done <<< "$STAGED"
+
+# ── 7. Suspicious postinstall scripts in package.json ───────────────────────
+while IFS= read -r file; do
+  if [[ "$file" == *"package.json" ]] && [[ "$file" != *"node_modules"* ]]; then
+    CONTENT=$(git show ":$file" 2>/dev/null)
+    if echo "$CONTENT" | grep -qE '"(postinstall|preinstall)"\s*:\s*"[^"]*python'; then
+      block "Suspicious postinstall script (python) in: $file"
+    fi
+    if echo "$CONTENT" | grep -qE '"(postinstall|preinstall)"\s*:\s*"[^"]*(curl|wget|91\.)'; then
+      block "Suspicious postinstall script (network call) in: $file"
+    fi
+  fi
+done <<< "$STAGED"
+
+# ── 8. Tmp .py files being committed ────────────────────────────────────────
+while IFS= read -r file; do
+  if [[ "$file" == *"/tmp"*".py" ]] || [[ "$file" =~ tmp[a-z0-9]+\.py ]]; then
+    block "Temp Python payload file being committed: $file"
+  fi
+done <<< "$STAGED"
+
+# ── Result ───────────────────────────────────────────────────────────────────
+if [ "$FAIL" -eq 1 ]; then
+  echo ""
+  echo -e "${RED}Commit blocked. Malware indicators detected in staged files.${NC}"
+  echo "Review the files above, remove the malicious content, then try again."
+  echo "To bypass (ONLY if you are certain this is a false positive):"
+  echo "  git commit --no-verify"
+  exit 1
+fi
+
+echo "Malware scan passed."
+exit 0
