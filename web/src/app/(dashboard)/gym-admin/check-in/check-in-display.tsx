@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import QRCode from "react-qr-code";
-import { List, X } from "lucide-react";
+import { List, X, Download } from "lucide-react";
 
 type CheckInEntry = {
   id: string;
@@ -32,6 +32,47 @@ export function CheckInDisplay({
   const [selectedBranchId, setSelectedBranchId] = useState<string | null>(
     branches.length > 0 ? branches[0].id : null
   );
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  function downloadQR() {
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) return;
+
+    const label = branches.length > 0 ? activeBranchName : "Scan to Check In";
+    const SIZE = 1024;
+    const PADDING = 64;
+    const LABEL_H = 80;
+    const canvasH = SIZE + PADDING * 2 + LABEL_H;
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = SIZE + PADDING * 2;
+      canvas.height = canvasH;
+      const ctx = canvas.getContext("2d")!;
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.drawImage(img, PADDING, PADDING, SIZE, SIZE);
+
+      ctx.fillStyle = "#111111";
+      ctx.font = `bold 36px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+      ctx.textAlign = "center";
+      ctx.fillText(label, canvas.width / 2, SIZE + PADDING + 52);
+
+      URL.revokeObjectURL(url);
+      const link = document.createElement("a");
+      link.download = `${label.toLowerCase().replace(/\s+/g, "-")}-qr.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+    img.src = url;
+  }
 
   const activeUrl = selectedBranchId
     ? `${siteUrl}/checkin/${gymId}?branch=${selectedBranchId}`
@@ -98,6 +139,7 @@ export function CheckInDisplay({
         </div>
 
         <div
+          ref={qrRef}
           style={{
             background: "#ffffff",
             padding: "1.5rem",
@@ -109,6 +151,36 @@ export function CheckInDisplay({
         >
           <QRCode value={activeUrl} size={280} level="M" style={{ display: "block" }} />
         </div>
+
+        <button
+          onClick={downloadQR}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.45rem",
+            padding: "0.55rem 1.1rem",
+            background: "transparent",
+            color: "var(--muted-foreground)",
+            border: "1px solid var(--border)",
+            borderRadius: "100px",
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 600,
+            fontSize: "0.78rem",
+            cursor: "pointer",
+            transition: "all 0.15s",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--foreground)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--foreground)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+          }}
+        >
+          <Download size={13} />
+          Download for printing
+        </button>
 
         {isLocalhost && (
           <p

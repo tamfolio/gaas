@@ -36,8 +36,8 @@ export async function POST(request: Request) {
     role: string,
     gymId: string | null
   ) {
-    // Check if user already exists
-    const { data: existing } = await admin.auth.admin.listUsers();
+    // Check if user already exists (fetch up to 1000 users to avoid pagination cutoff)
+    const { data: existing } = await admin.auth.admin.listUsers({ perPage: 1000 });
     const found = existing.users.find((u) => u.email === email);
 
     let userId: string;
@@ -57,8 +57,7 @@ export async function POST(request: Request) {
 
     await admin
       .from("profiles")
-      .update({ full_name: fullName, role, gym_id: gymId })
-      .eq("id", userId);
+      .upsert({ id: userId, email, full_name: fullName, role, gym_id: gymId }, { onConflict: "id" });
 
     return userId;
   }
@@ -93,6 +92,40 @@ export async function POST(request: Request) {
       null
     );
     results.platform_admin = "ok";
+
+    // 5. Trainer
+    const trainerId = await upsertUser(
+      process.env.TEST_TRAINER_EMAIL!,
+      process.env.TEST_TRAINER_PASSWORD!,
+      "Test Trainer",
+      "trainer",
+      gym.id
+    );
+    await admin.from("gym_trainers").upsert(
+      { gym_id: gym.id, profile_id: trainerId, specialization: "General Fitness" },
+      { onConflict: "gym_id,profile_id" }
+    );
+    results.trainer = "ok";
+
+    // 6. Member
+    const memberId = await upsertUser(
+      process.env.TEST_MEMBER_EMAIL!,
+      process.env.TEST_MEMBER_PASSWORD!,
+      "Test Member",
+      "member",
+      gym.id
+    );
+    await admin.from("gym_members").upsert(
+      {
+        gym_id: gym.id,
+        profile_id: memberId,
+        status: "active",
+        barcode_code: "ER-TEST-MEMBER",
+        start_date: new Date().toISOString().split("T")[0],
+      },
+      { onConflict: "gym_id,profile_id" }
+    );
+    results.member = "ok";
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }

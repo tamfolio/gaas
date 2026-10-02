@@ -1,7 +1,6 @@
 import { defineConfig } from "@playwright/test";
 import { existsSync } from "fs";
 
-// Load .env.test when running locally (Node 20.12+ built-in)
 if (existsSync(".env.test")) {
   (process as NodeJS.Process & { loadEnvFile?: (path: string) => void })
     .loadEnvFile?.(".env.test");
@@ -16,7 +15,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "npm run dev",
+    command: "pnpm dev",
     url: "http://localhost:3000",
     reuseExistingServer: true,
   },
@@ -39,6 +38,18 @@ export default defineConfig({
       testMatch: /front-desk\.spec\.ts/,
       dependencies: ["setup"],
       use: { storageState: "tests/e2e/.auth/front-desk.json" },
+    },
+    {
+      name: "trainer",
+      testMatch: /trainer\.spec\.ts/,
+      dependencies: ["setup"],
+      use: { storageState: "tests/e2e/.auth/trainer.json" },
+    },
+    {
+      name: "member",
+      testMatch: /member\.spec\.ts/,
+      dependencies: ["setup"],
+      use: { storageState: "tests/e2e/.auth/member.json" },
     },
   ],
 });
