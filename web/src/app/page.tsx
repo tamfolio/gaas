@@ -17,7 +17,13 @@ export default async function Home() {
       .single();
 
     switch (profile?.role) {
+      case "platform_admin":
+      case "platform_staff":
+        redirect("/super-admin");
       case "gym_admin":
+      case "second_admin":
+      case "front_desk":
+      case "accountant":
         redirect("/gym-admin");
       case "trainer":
         redirect("/trainer");
