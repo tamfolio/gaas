@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  const hostname = request.headers.get("host") ?? "";
+  const hostname = request.nextUrl.hostname;
   const pathname = request.nextUrl.pathname;
 
   // gym.engineroom.com.ng → redirect root to /login
