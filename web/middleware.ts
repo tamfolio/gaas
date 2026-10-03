@@ -1,7 +1,15 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get("host") ?? "";
+  const pathname = request.nextUrl.pathname;
+
+  // gym.engineroom.com.ng → redirect root to /login
+  if (hostname.startsWith("gym.") && pathname === "/") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   return await updateSession(request);
 }
 
