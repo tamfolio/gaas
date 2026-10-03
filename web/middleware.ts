@@ -1,15 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
 
-export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-
-  // Dead-simple test: redirect every root request regardless of hostname
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  return await updateSession(request);
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+  response.headers.set("x-mw", "1");
+  response.headers.set("x-mw-path", request.nextUrl.pathname);
+  response.headers.set("x-mw-host", request.headers.get("host") ?? "none");
+  return response;
 }
 
 export const config = {
