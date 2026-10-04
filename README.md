@@ -99,7 +99,7 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 
 ### Platform Admin (Super-Admin)
 
-> **Access model:** Separate route group `/super-admin` within the same Next.js app, accessible only to accounts with the `platform_admin` role. Can be served on a custom subdomain (e.g. `admin.engineroom.ng`) via Vercel domain aliases with a host-based redirect in `next.config.ts`.
+> **Access model:** Separate route group `/super-admin` within the same Next.js app, accessible only to accounts with the `platform_admin` or `platform_staff` role. Served on `gym.engineroom.com.ng` — the root `/` redirects to `/login` via host detection in `page.tsx`.
 
 > **Gym onboarding policy:** New gyms registered via the public sign-up form do not go live immediately. They enter a **pending approval** state and must be reviewed and approved by a super-admin before they can access the platform. This prevents unauthorised or spam tenants.
 
@@ -107,12 +107,14 @@ Each vertical shares the same auth, tenant isolation, and billing infrastructure
 |---------|--------|-------|
 | Register flow → pending status | ✅ Done | new gyms created with `pending` subscription_status; middleware blocks dashboard access until approved; `/pending` holding page shown |
 | Platform team management | ✅ Done | invite/remove platform staff; direct magic link (no approval tier needed) |
-| Dashboard stats | ⬜ Pending | total gyms, members, revenue across all tenants |
-| All gyms list | ⬜ Pending | filterable by status: pending / active / suspended |
-| Approve / reject gym registration | ⬜ Pending | approval unlocks access + notifies owner; rejection sends reason |
-| Gym detail view | ⬜ Pending | member count, trainer count, revenue, plan, date joined |
-| Suspend / reactivate gym | ⬜ Pending | blocks all users of that gym from logging in |
-| Platform revenue overview | ⬜ Pending | aggregated payments across all tenants |
+| Dashboard stats | ✅ Done | total gyms, active members, revenue — with charts |
+| All gyms list | ✅ Done | filterable by status: pending / trial / active / suspended / cancelled |
+| Approve / reject gym registration | ✅ Done | approve → trial; reject → deletes gym record |
+| Gym detail view | ✅ Done | member count, subscription status, plan, joined date |
+| Suspend / reactivate gym | ✅ Done | suspend blocks gym dashboard access; reactivate restores to trial |
+| Manual gym onboarding (from super admin) | ⬜ Pending | platform admin creates gym + gym owner account directly, without requiring self-registration |
+| Gym onboarding wizard (post-approve) | ⬜ Pending | guided setup flow for newly approved gyms |
+| Platform revenue overview | ⬜ Pending | aggregated subscription payments across all tenants |
 
 ---
 
@@ -139,12 +141,12 @@ These need to be added to Vercel before the related features work in production:
 | Variable | Where | Why |
 |----------|-------|-----|
 | `CRON_SECRET` | Vercel env vars | Secures `/api/cron/expiry-notifications`. Without it, automated expiry alerts return 401 and never fire. |
-| `NEXT_PUBLIC_SITE_URL` | Vercel env vars | Set to `https://gaas-web-chi.vercel.app`. Used in invite/email redirect URLs. Without it, invite links fall back to localhost and fail in production. |
-| `SENDER_MAIL` | Vercel env vars | Gmail address used to send emails — `theengineroommail@gmail.com` |
+| `SITE_URL` | Vercel env vars | Set to `https://gym.engineroom.com.ng`. Used in invite/email redirect URLs. Without it, invite links fall back to localhost and fail in production. |
+| `SENDER_MAIL` | Vercel env vars | Gmail address used to send emails |
 | `SENDER_PASS` | Vercel env vars | Gmail App Password (Google Account → Security → 2-Step Verification → App passwords). Not your regular Gmail password. |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Vercel env vars | VAPID public key for web push — already generated, see `.env.local` |
 | `VAPID_PRIVATE_KEY` | Vercel env vars | VAPID private key for web push — already generated, see `.env.local` |
-| `VAPID_MAILTO` | Vercel env vars | `mailto:theengineroommail@gmail.com` |
+| `VAPID_MAILTO` | Vercel env vars | `mailto:` address for VAPID |
 
 ---
 
@@ -154,8 +156,8 @@ In Supabase → Authentication → URL Configuration:
 
 | Setting | Value |
 |---------|-------|
-| **Site URL** | `https://gaas-web-chi.vercel.app` |
-| **Redirect URLs** | `https://gaas-web-chi.vercel.app/**` |
+| **Site URL** | `https://gym.engineroom.com.ng` |
+| **Redirect URLs** | `https://gym.engineroom.com.ng/**` |
 
 Without these, invite links and magic links will fail to redirect correctly.
 
@@ -211,6 +213,6 @@ NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=
 ANTHROPIC_API_KEY=
 SENDER_MAIL=yourapp@gmail.com
 SENDER_PASS=your-gmail-app-password
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+SITE_URL=http://localhost:3000
 CRON_SECRET=
 ```
