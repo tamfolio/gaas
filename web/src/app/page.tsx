@@ -1,9 +1,16 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function Home() {
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host") ?? "";
+  if (host.startsWith("gym.")) {
+    redirect("/login");
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
