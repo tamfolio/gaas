@@ -19,7 +19,7 @@ export default async function CheckInPage() {
   const gymId = profile?.gym_id;
   if (!gymId) redirect("/gym-admin");
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
   const isLocalhost = siteUrl.includes("localhost");
 
   const { data: gym } = await supabase.from("gyms").select("has_branches").eq("id", gymId).single();

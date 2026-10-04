@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
       }).catch(() => null);
 
       if (admin.email) {
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+        const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
         await sendMail({
           to: admin.email,
           subject: `Your EngineRoom subscription for ${gym.name} expires in ${threshold.label}`,
@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (admin) {
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+      const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
 
       await adminClient.from("notifications").insert({
         gym_id: gym.id,

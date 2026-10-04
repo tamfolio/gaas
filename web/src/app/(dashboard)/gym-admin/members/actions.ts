@@ -157,7 +157,7 @@ export async function addMember(formData: FormData) {
       memberName: fullName,
       email,
       tempPassword,
-      loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/login`,
+      loginUrl: `${process.env.SITE_URL ?? "http://localhost:3000"}/login`,
     }),
   });
 
@@ -175,7 +175,7 @@ export async function addTrainer(formData: FormData) {
   const specialization = (formData.get("specialization") as string) || null;
   const bio = (formData.get("bio") as string) || null;
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
 
   const { data: authData, error: authError } =
     await adminClient.auth.admin.inviteUserByEmail(email, {
@@ -349,7 +349,7 @@ export async function resendMemberInvite(profileId: string, email: string, gymId
     .eq("id", profileId)
     .single();
 
-  const loginUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/login`;
+  const loginUrl = `${process.env.SITE_URL ?? "http://localhost:3000"}/login`;
 
   try {
     await sendMail({

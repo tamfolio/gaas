@@ -37,7 +37,7 @@ export async function initiateGymSubscription(formData: FormData) {
 
   const amount = period === "annual" ? planData.price_annual : planData.price_halfyear;
   const reference = `ERSUB${Date.now()}${randomBytes(4).toString("hex")}`;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
 
   await adminClient.from("gym_subscription_payments").insert({
     gym_id: profile.gym_id,
