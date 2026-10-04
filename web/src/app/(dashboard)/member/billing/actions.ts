@@ -33,7 +33,7 @@ export async function initiateRenewalPayment() {
   if (!plan.price || plan.price <= 0) throw new Error("This plan has no payment amount set.");
 
   const reference = `ER${Date.now()}${randomBytes(4).toString("hex")}`;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
+  const siteUrl = process.env.SITE_URL!;
 
   // Pre-create a pending payment record for the webhook to update
   const adminClient = createAdminClient();

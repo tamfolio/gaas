@@ -8,7 +8,7 @@ import { sendPushToProfile } from "@/lib/push";
 import { requiresOwnerApproval } from "@/lib/permissions";
 import type { GymStaffRole } from "@/lib/permissions";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = process.env.SITE_URL ?? "http://localhost:3000";
 
 export async function inviteStaff(formData: FormData) {
   const supabase = await createClient();

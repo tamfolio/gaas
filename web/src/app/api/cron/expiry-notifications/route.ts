@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
             gymName: "your gym",
             expiryDate: endDate,
             daysLeft,
-            loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/login`,
+            loginUrl: `${process.env.SITE_URL ?? "http://localhost:3000"}/login`,
           }),
         }).catch(() => null);
       }
