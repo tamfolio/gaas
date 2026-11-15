@@ -105,7 +105,7 @@ export default async function WorkoutPage() {
               lineHeight: 1.7,
             }}
           >
-            Your trainer will assign an AI-generated workout plan tailored to your goals.
+            Your trainer will build a workout plan tailored to your goals. It will show up here.
             Check back after your first session.
           </p>
         </div>

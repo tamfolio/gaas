@@ -31,7 +31,7 @@ const FEATURE_CARDS = [
   {
     icon: "◆",
     title: "Workout Plan",
-    description: "View your current AI-generated workout schedule.",
+    description: "View the workout plan your trainer built for you.",
     href: "/member/workout",
   },
   {
