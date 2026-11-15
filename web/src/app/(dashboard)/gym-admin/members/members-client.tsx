@@ -136,10 +136,12 @@ export function MembersClient({
   members,
   gymId,
   plans,
+  canAssignWorkouts = false,
 }: {
   members: MemberRow[];
   gymId: string;
   plans: Plan[];
+  canAssignWorkouts?: boolean;
 }) {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("All");
@@ -217,7 +219,7 @@ export function MembersClient({
                   background: active
                     ? "color-mix(in oklch, var(--primary) 10%, var(--background))"
                     : "var(--background)",
-                  color: active ? "var(--primary)" : "var(--muted-foreground)",
+                  color: active ? "var(--primary-text)" : "var(--muted-foreground)",
                   fontSize: "0.78rem",
                   fontWeight: active ? 600 : 400,
                   cursor: "pointer",
@@ -234,7 +236,7 @@ export function MembersClient({
                       background: active
                         ? "color-mix(in oklch, var(--primary) 18%, transparent)"
                         : "var(--muted)",
-                      color: active ? "var(--primary)" : "var(--muted-foreground)",
+                      color: active ? "var(--primary-text)" : "var(--muted-foreground)",
                       fontSize: "0.65rem",
                       fontWeight: 700,
                       padding: "0.05rem 0.35rem",
@@ -336,7 +338,7 @@ export function MembersClient({
                       justifyContent: "center",
                       fontSize: "0.65rem",
                       fontWeight: 700,
-                      color: "var(--primary)",
+                      color: "var(--primary-text)",
                       flexShrink: 0,
                     }}
                   >
@@ -431,6 +433,7 @@ export function MembersClient({
           plans={plans}
           gymId={gymId}
           onClose={() => setSelected(null)}
+          canAssignWorkouts={canAssignWorkouts}
         />
       )}
     </>

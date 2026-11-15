@@ -1,7 +1,8 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { PlanBuilder } from "./plan-builder";
+import { PlanBuilder } from "@/components/workout/plan-builder";
+import { assignWorkoutPlan } from "./actions";
 
 export default async function AssignPlanPage({
   params,
@@ -90,7 +91,12 @@ export default async function AssignPlanPage({
         </p>
       </div>
 
-      <PlanBuilder memberId={memberId} memberName={memberName} />
+      <PlanBuilder
+        memberId={memberId}
+        memberName={memberName}
+        saveAction={assignWorkoutPlan}
+        doneHref={`/trainer/members/${memberId}`}
+      />
     </div>
   );
 }

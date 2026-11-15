@@ -2,7 +2,8 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X, RotateCcw, UserX, UserCheck, Pencil, Check, Trash2, Mail } from "lucide-react";
+import Link from "next/link";
+import { X, RotateCcw, UserX, UserCheck, Pencil, Check, Trash2, Mail, Dumbbell, ChevronRight } from "lucide-react";
 import { renewMembership, updateMemberStatus, updateMemberProfile, getMemberPayments, removeMember, resendMemberInvite } from "./actions";
 import type { MemberRow, Plan } from "./members-client";
 
@@ -150,11 +151,14 @@ export function MemberDetailSheet({
   plans,
   gymId,
   onClose,
+  canAssignWorkouts = false,
 }: {
   member: MemberRow;
   plans: Plan[];
   gymId: string;
   onClose: () => void;
+  /** Owner / second admin only */
+  canAssignWorkouts?: boolean;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -390,7 +394,7 @@ export function MemberDetailSheet({
                 justifyContent: "center",
                 fontSize: "1rem",
                 fontWeight: 700,
-                color: "var(--primary)",
+                color: "var(--primary-text)",
                 flexShrink: 0,
                 border: "2px solid color-mix(in oklch, var(--primary) 25%, transparent)",
               }}
@@ -440,6 +444,43 @@ export function MemberDetailSheet({
               <Pencil size={13} />
             </button>
           </div>
+
+          {canAssignWorkouts && (
+            <Link
+              href={`/gym-admin/members/${member.id}/workout-plan`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
+                marginTop: "1rem",
+                padding: "0.7rem 0.875rem",
+                borderRadius: "0.5rem",
+                border: "1px solid var(--border)",
+                background: "var(--card)",
+                color: "var(--foreground)",
+                textDecoration: "none",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+              }}
+            >
+              <span
+                style={{
+                  display: "grid",
+                  placeItems: "center",
+                  width: "1.75rem",
+                  height: "1.75rem",
+                  borderRadius: "0.375rem",
+                  background: "color-mix(in oklch, var(--primary) 25%, transparent)",
+                  color: "var(--primary-text)",
+                  flexShrink: 0,
+                }}
+              >
+                <Dumbbell size={14} />
+              </span>
+              <span style={{ flex: 1 }}>Assign workout plan</span>
+              <ChevronRight size={15} style={{ color: "var(--muted-foreground)" }} />
+            </Link>
+          )}
 
           {/* Edit profile form */}
           {panel === "edit" && (
@@ -663,7 +704,7 @@ export function MemberDetailSheet({
                   borderRadius: "0.5rem",
                   border: "none",
                   background: "var(--primary)",
-                  color: "#fff",
+                  color: "var(--primary-foreground)",
                   fontSize: "0.85rem",
                   fontWeight: 600,
                   cursor: "pointer",
@@ -714,7 +755,7 @@ export function MemberDetailSheet({
                     borderRadius: "0.5rem",
                     border: "1px solid color-mix(in oklch, var(--primary) 40%, transparent)",
                     background: "color-mix(in oklch, var(--primary) 8%, var(--background))",
-                    color: "var(--primary)",
+                    color: "var(--primary-text)",
                     fontSize: "0.85rem",
                     fontWeight: 600,
                     cursor: isPending ? "not-allowed" : "pointer",
@@ -846,7 +887,7 @@ export function MemberDetailSheet({
                         borderRadius: "0.5rem",
                         border: "none",
                         background: "var(--primary)",
-                        color: "#fff",
+                        color: "var(--primary-foreground)",
                         fontSize: "0.85rem",
                         fontWeight: 600,
                         cursor: isPending || !renewPlanId ? "not-allowed" : "pointer",
