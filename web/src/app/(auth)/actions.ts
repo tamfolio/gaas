@@ -138,7 +138,12 @@ export async function forgotPassword(formData: FormData) {
       return { success: true };
     }
 
-    const link = await createAuthEmailLink({ type: "recovery", email, next: "/reset-password" });
+    const link = await createAuthEmailLink({
+      type: "recovery",
+      email,
+      name: profile.full_name,
+      next: "/reset-password",
+    });
     if ("error" in link) {
       console.error("[forgotPassword] link generation failed", link.error);
       return { success: true };

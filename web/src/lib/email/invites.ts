@@ -30,6 +30,7 @@ export async function sendAccountInvite({
   const link = await createAuthEmailLink({
     type: "invite",
     email,
+    name: fullName,
     next,
     data: { full_name: fullName, role },
   });
