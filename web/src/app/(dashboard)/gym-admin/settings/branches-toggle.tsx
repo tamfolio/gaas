@@ -43,7 +43,7 @@ export function BranchesToggle({ enabled }: { enabled: boolean }) {
             flexShrink: 0,
           }}
         >
-          <GitBranch size={15} style={{ color: on ? "var(--primary)" : "var(--muted-foreground)" }} />
+          <GitBranch size={15} style={{ color: on ? "var(--primary-text)" : "var(--muted-foreground)" }} />
         </div>
         <div>
           <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)" }}>

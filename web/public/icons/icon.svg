@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EngineRoom">
+  <defs>
+    <linearGradient id="limef" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DDFF4D"/>
+      <stop offset="1" stop-color="#B8F000"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="200" height="200" rx="40" fill="#0B0C0E"/>
+  <g transform="translate(100,100)" fill="url(#limef)">
+    <rect x="-11" y="-72" width="22" height="26" rx="4"/>
+    <rect x="-11" y="-72" width="22" height="26" rx="4" transform="rotate(45)"/>
+    <rect x="-11" y="-72" width="22" height="26" rx="4" transform="rotate(90)"/>
+    <rect x="-11" y="-72" width="22" height="26" rx="4" transform="rotate(135)"/>
+    <rect x="-11" y="-72" width="22" height="26" rx="4" transform="rotate(180)"/>
+    <rect x="-11" y="-72" width="22" height="26" rx="4" transform="rotate(225)"/>
+    <rect x="-11" y="-72" width="22" height="26" rx="4" transform="rotate(270)"/>
+    <rect x="-11" y="-72" width="22" height="26" rx="4" transform="rotate(315)"/>
+    <circle r="54"/>
+  </g>
+  <circle cx="100" cy="100" r="42" fill="#0B0C0E"/>
+  <g fill="#EEF0F2">
+    <rect x="86" y="95" width="28" height="10" rx="2"/>
+    <rect x="78" y="86" width="9"  height="28" rx="2"/>
+    <rect x="68" y="80" width="11" height="40" rx="3"/>
+    <rect x="62" y="88" width="7"  height="24" rx="2"/>
+    <rect x="113" y="86" width="9"  height="28" rx="2"/>
+    <rect x="121" y="80" width="11" height="40" rx="3"/>
+    <rect x="131" y="88" width="7"  height="24" rx="2"/>
+  </g>
+</svg>

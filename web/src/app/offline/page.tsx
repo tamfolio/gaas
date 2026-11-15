@@ -62,7 +62,7 @@ export default function OfflinePage() {
         style={{
           padding: "0.65rem 1.75rem",
           background: "var(--primary)",
-          color: "#fff",
+          color: "var(--primary-foreground)",
           border: "none",
           borderRadius: "0.5rem",
           fontSize: "0.875rem",
@@ -80,7 +80,7 @@ export default function OfflinePage() {
           fontSize: "0.72rem",
           fontWeight: 700,
           letterSpacing: "0.1em",
-          color: "var(--primary)",
+          color: "var(--primary-text)",
           textTransform: "uppercase",
         }}
       >

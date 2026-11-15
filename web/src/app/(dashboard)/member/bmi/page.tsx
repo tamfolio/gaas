@@ -284,7 +284,7 @@ export default function BmiPage() {
             disabled={isPending}
             style={{
               background: "var(--primary)",
-              color: "white",
+              color: "var(--primary-foreground)",
               border: "none",
               borderRadius: "0.5rem",
               padding: "0 1.25rem",

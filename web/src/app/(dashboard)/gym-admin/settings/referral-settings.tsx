@@ -57,7 +57,7 @@ export function ReferralSettings({ rewardDays }: { rewardDays: number }) {
         <Button
           type="submit"
           disabled={pending}
-          style={{ height: "2.25rem", fontSize: "0.85rem", background: "var(--primary)", color: "white", border: "none" }}
+          style={{ height: "2.25rem", fontSize: "0.85rem", background: "var(--primary)", color: "var(--primary-foreground)", border: "none" }}
         >
           {pending ? "Saving…" : saved ? "Saved" : "Save"}
         </Button>

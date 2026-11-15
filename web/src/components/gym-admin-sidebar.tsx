@@ -84,7 +84,7 @@ function NavItem({
         fontSize: "0.875rem",
         fontWeight: active ? 600 : 400,
         color: active ? "var(--brand-dark-fg)" : "rgba(255,255,255,0.45)",
-        background: active ? "rgba(232, 70, 10, 0.13)" : "transparent",
+        background: active ? "color-mix(in oklch, var(--primary) 13%, transparent)" : "transparent",
         borderLeft: `2px solid ${active ? "var(--primary)" : "transparent"}`,
         letterSpacing: "-0.01em",
       }}
@@ -92,7 +92,7 @@ function NavItem({
       <Icon
         size={15}
         style={{
-          color: active ? "var(--primary)" : "rgba(255,255,255,0.3)",
+          color: active ? "var(--primary-text)" : "rgba(255,255,255,0.3)",
           flexShrink: 0,
         }}
       />
@@ -124,7 +124,7 @@ function SidebarInner({
     .toUpperCase();
 
   return (
-    <div
+    <div className="on-dark"
       style={{
         width: "252px",
         height: "100vh",
@@ -152,7 +152,7 @@ function SidebarInner({
       >
         <Link href="/" style={{ textDecoration: "none", flex: 1, minWidth: 0 }}>
           <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "#fff" }}>
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+            Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
           </span>
           <div
             style={{
@@ -233,14 +233,14 @@ function SidebarInner({
             width: "30px",
             height: "30px",
             borderRadius: "50%",
-            background: "rgba(232, 70, 10, 0.18)",
-            border: "1px solid rgba(232, 70, 10, 0.3)",
+            background: "color-mix(in oklch, var(--primary) 18%, transparent)",
+            border: "1px solid color-mix(in oklch, var(--primary) 30%, transparent)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: "0.65rem",
             fontWeight: 700,
-            color: "var(--primary)",
+            color: "var(--primary-text)",
             flexShrink: 0,
             letterSpacing: "0.02em",
           }}
@@ -262,7 +262,7 @@ function SidebarInner({
           >
             {userName}
           </div>
-          <div style={{ fontSize: "0.62rem", color: "var(--primary)", fontWeight: 500 }}>
+          <div style={{ fontSize: "0.62rem", color: "var(--primary-text)", fontWeight: 500 }}>
             {ROLE_LABELS[userRole] ?? "Staff"}
           </div>
         </div>
@@ -342,7 +342,7 @@ export function GymAdminSidebar({
   // Mobile: fixed top bar + overlay
   return (
     <>
-      <div
+      <div className="on-dark"
         style={{
           position: "fixed",
           top: 0,
@@ -374,7 +374,7 @@ export function GymAdminSidebar({
         </button>
 
         <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "#fff" }}>
-          Engine<span style={{ color: "var(--primary)" }}>Room</span>
+          Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
         </span>
 
         <ThemeToggle onDark />
@@ -409,7 +409,7 @@ export function GymAdminSidebar({
               pathname={pathname}
               onClose={() => setMobileOpen(false)}
             />
-            <button
+            <button className="on-dark"
               onClick={() => setMobileOpen(false)}
               style={{
                 position: "absolute",

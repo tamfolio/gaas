@@ -90,7 +90,7 @@ export function GuestVisitsClient({
           <button
             onClick={() => setShowForm((v) => !v)}
             style={{
-              background: "var(--primary)", color: "white", border: "none",
+              background: "var(--primary)", color: "var(--primary-foreground)", border: "none",
               borderRadius: "0.5rem", padding: "0.6rem 1.25rem",
               fontSize: "0.85rem", fontWeight: 600, cursor: "pointer",
               fontFamily: "var(--font-jakarta)", flexShrink: 0,
@@ -164,7 +164,7 @@ export function GuestVisitsClient({
               <Button type="button" variant="outline" onClick={() => setShowForm(false)} style={{ height: "2.5rem", fontSize: "0.875rem" }}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading} style={{ height: "2.5rem", fontSize: "0.875rem", background: "var(--primary)", color: "white", border: "none" }}>
+              <Button type="submit" disabled={loading} style={{ height: "2.5rem", fontSize: "0.875rem", background: "var(--primary)", color: "var(--primary-foreground)", border: "none" }}>
                 {loading ? "Saving…" : "Log visit"}
               </Button>
             </div>

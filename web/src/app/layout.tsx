@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#E8460A",
+  themeColor: "#0B0C0E",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -39,8 +39,11 @@ export const metadata: Metadata = {
     title: "EngineRoom",
   },
   icons: {
-    icon: "https://res.cloudinary.com/dnovlrekd/image/upload/v1784930105/engineroom-favicon_raihiq.svg",
-    apple: "https://res.cloudinary.com/dnovlrekd/image/upload/w_180,h_180/v1784930105/engineroom-favicon_raihiq.png",
+    icon: [
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
 };
 
@@ -52,6 +55,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${syne.variable} ${jakarta.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

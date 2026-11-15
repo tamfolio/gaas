@@ -26,7 +26,7 @@ export function FeatureCards({ cards }: { cards: Card[] }) {
               ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--border)")
             }
           >
-            <div style={{ fontSize: "1.25rem", color: "var(--primary)", marginBottom: "0.75rem", lineHeight: 1 }}>
+            <div style={{ fontSize: "1.25rem", color: "var(--primary-text)", marginBottom: "0.75rem", lineHeight: 1 }}>
               {item.icon}
             </div>
             <h3 style={{ fontFamily: "var(--font-syne)", fontSize: "0.95rem", fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.02em", marginBottom: "0.375rem" }}>

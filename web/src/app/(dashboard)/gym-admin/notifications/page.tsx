@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ComposeSheet } from "./compose-sheet";
 
 const TYPE_LABELS: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  announcement: { label: "Announcement", color: "var(--primary)", bg: "color-mix(in oklch, var(--primary) 10%, transparent)", border: "color-mix(in oklch, var(--primary) 20%, transparent)" },
+  announcement: { label: "Announcement", color: "var(--primary-text)", bg: "color-mix(in oklch, var(--primary) 10%, transparent)", border: "color-mix(in oklch, var(--primary) 20%, transparent)" },
   expiry_7d:    { label: "Expiry — 7 days", color: "oklch(0.55 0.14 55)", bg: "oklch(0.97 0.04 55)", border: "oklch(0.88 0.07 55)" },
   expiry_3d:    { label: "Expiry — 3 days", color: "oklch(0.52 0.18 40)", bg: "oklch(0.97 0.04 40)", border: "oklch(0.87 0.08 40)" },
   reminder:     { label: "Reminder", color: "var(--muted-foreground)", bg: "var(--muted)", border: "var(--border)" },

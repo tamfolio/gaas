@@ -126,7 +126,7 @@ export default function LoginPage() {
         Own a gym?{" "}
         <Link
           href="/register"
-          style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}
+          style={{ color: "var(--primary-text)", fontWeight: 600, textDecoration: "none" }}
         >
           Register your gym →
         </Link>

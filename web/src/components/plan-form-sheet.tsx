@@ -112,7 +112,7 @@ export function PlanFormSheet({
           onClick={() => setOpen(true)}
           style={{
             background: "var(--primary)",
-            color: "white",
+            color: "var(--primary-foreground)",
             border: "none",
             borderRadius: "0.5rem",
             padding: "0.6rem 1.25rem",
@@ -405,7 +405,7 @@ export function PlanFormSheet({
                           borderRadius: "0.375rem",
                           border: `1px solid ${branchAccess === val ? "var(--primary)" : "var(--border)"}`,
                           background: branchAccess === val ? "color-mix(in oklch, var(--primary) 10%, var(--background))" : "var(--background)",
-                          color: branchAccess === val ? "var(--primary)" : "var(--foreground)",
+                          color: branchAccess === val ? "var(--primary-text)" : "var(--foreground)",
                           fontSize: "0.78rem",
                           fontWeight: branchAccess === val ? 600 : 400,
                           cursor: "pointer",
@@ -509,7 +509,7 @@ export function PlanFormSheet({
                     height: "2.5rem",
                     fontSize: "0.875rem",
                     background: "var(--primary)",
-                    color: "white",
+                    color: "var(--primary-foreground)",
                     border: "none",
                   }}
                 >

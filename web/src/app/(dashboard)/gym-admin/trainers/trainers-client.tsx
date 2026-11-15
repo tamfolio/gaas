@@ -56,7 +56,7 @@ export function TrainersClient({ trainers }: { trainers: TrainerRow[] }) {
                     justifyContent: "center",
                     fontSize: "0.8rem",
                     fontWeight: 700,
-                    color: "var(--primary)",
+                    color: "var(--primary-text)",
                     flexShrink: 0,
                   }}
                 >
@@ -88,7 +88,7 @@ export function TrainersClient({ trainers }: { trainers: TrainerRow[] }) {
                       fontWeight: 600,
                       letterSpacing: "0.05em",
                       textTransform: "uppercase",
-                      color: "var(--primary)",
+                      color: "var(--primary-text)",
                       background: "color-mix(in oklch, var(--primary) 10%, transparent)",
                       border: "1px solid color-mix(in oklch, var(--primary) 20%, transparent)",
                       padding: "0.15rem 0.5rem",

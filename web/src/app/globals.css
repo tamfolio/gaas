@@ -35,6 +35,7 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -52,78 +53,81 @@
   --font-sans: var(--font-jakarta);
   --font-heading: var(--font-syne);
 
-  /* Fixed brand dark — stays dark in both light and dark mode */
-  --brand-dark: oklch(0.115 0.005 60);
-  --brand-dark-fg: oklch(0.984 0.002 60);
-  --brand-dark-muted: oklch(0.50 0.009 55);
+  /* Fixed brand dark — jet black, stays dark in both light and dark mode */
+  --brand-dark: oklch(0.145 0.003 250);
+  --brand-dark-fg: oklch(0.955 0.003 250);
+  --brand-dark-muted: oklch(0.64 0.006 250);
 
-  /* Warm brand palette */
-  --background: oklch(0.984 0.002 60);
-  --foreground: oklch(0.115 0.004 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.115 0.004 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.115 0.004 60);
-  --primary: oklch(0.57 0.205 37);
-  --primary-foreground: oklch(0.984 0 0);
-  --secondary: oklch(0.958 0.004 60);
-  --secondary-foreground: oklch(0.115 0.004 60);
-  --muted: oklch(0.958 0.004 60);
-  --muted-foreground: oklch(0.50 0.009 55);
-  --accent: oklch(0.97 0.004 60);
-  --accent-foreground: oklch(0.115 0.004 60);
+  /* Brand palette: cloud grey · jet black · acid lime */
+  --background: oklch(0.955 0.003 250);
+  --foreground: oklch(0.16 0.004 250);
+  --card: oklch(0.99 0.001 250);
+  --card-foreground: oklch(0.16 0.004 250);
+  --popover: oklch(0.99 0.001 250);
+  --popover-foreground: oklch(0.16 0.004 250);
+  --primary: oklch(0.93 0.22 125);
+  --primary-foreground: oklch(0.16 0.004 250);
+  /* Lime is unreadable as text on light surfaces — use this for text/icons */
+  --primary-text: oklch(0.5 0.14 130);
+  --secondary: oklch(0.92 0.004 250);
+  --secondary-foreground: oklch(0.16 0.004 250);
+  --muted: oklch(0.92 0.004 250);
+  --muted-foreground: oklch(0.47 0.008 250);
+  --accent: oklch(0.93 0.004 250);
+  --accent-foreground: oklch(0.16 0.004 250);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.905 0.006 60);
-  --input: oklch(0.935 0.005 60);
-  --ring: oklch(0.57 0.205 37 / 40%);
-  --chart-1: oklch(0.57 0.205 37);
-  --chart-2: oklch(0.70 0.15 45);
+  --border: oklch(0.875 0.005 250);
+  --input: oklch(0.9 0.004 250);
+  --ring: oklch(0.6 0.17 128 / 50%);
+  --chart-1: oklch(0.62 0.17 128);
+  --chart-2: oklch(0.16 0.004 250);
   --chart-3: oklch(0.58 0.10 200);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --chart-4: oklch(0.55 0.006 250);
+  --chart-5: oklch(0.75 0.004 250);
   --radius: 0.5rem;
-  --sidebar: oklch(0.984 0.002 60);
-  --sidebar-foreground: oklch(0.115 0.004 60);
-  --sidebar-primary: oklch(0.57 0.205 37);
-  --sidebar-primary-foreground: oklch(0.984 0 0);
-  --sidebar-accent: oklch(0.958 0.004 60);
-  --sidebar-accent-foreground: oklch(0.115 0.004 60);
-  --sidebar-border: oklch(0.905 0.006 60);
-  --sidebar-ring: oklch(0.57 0.205 37 / 40%);
+  --sidebar: oklch(0.975 0.002 250);
+  --sidebar-foreground: oklch(0.16 0.004 250);
+  --sidebar-primary: oklch(0.93 0.22 125);
+  --sidebar-primary-foreground: oklch(0.16 0.004 250);
+  --sidebar-accent: oklch(0.92 0.004 250);
+  --sidebar-accent-foreground: oklch(0.16 0.004 250);
+  --sidebar-border: oklch(0.875 0.005 250);
+  --sidebar-ring: oklch(0.6 0.17 128 / 50%);
 }
 
 .dark {
-  --background: oklch(0.124 0.005 60);
-  --foreground: oklch(0.984 0.002 60);
-  --card: oklch(0.165 0.005 60);
-  --card-foreground: oklch(0.984 0.002 60);
-  --popover: oklch(0.165 0.005 60);
-  --popover-foreground: oklch(0.984 0.002 60);
-  --primary: oklch(0.57 0.205 37);
-  --primary-foreground: oklch(0.984 0 0);
-  --secondary: oklch(0.22 0.005 60);
-  --secondary-foreground: oklch(0.984 0.002 60);
-  --muted: oklch(0.22 0.005 60);
-  --muted-foreground: oklch(0.60 0.009 55);
-  --accent: oklch(0.22 0.005 60);
-  --accent-foreground: oklch(0.984 0.002 60);
+  --background: oklch(0.145 0.003 250);
+  --foreground: oklch(0.955 0.003 250);
+  --card: oklch(0.19 0.003 250);
+  --card-foreground: oklch(0.955 0.003 250);
+  --popover: oklch(0.19 0.003 250);
+  --popover-foreground: oklch(0.955 0.003 250);
+  --primary: oklch(0.93 0.22 125);
+  --primary-foreground: oklch(0.16 0.004 250);
+  --primary-text: oklch(0.93 0.22 125);
+  --secondary: oklch(0.24 0.004 250);
+  --secondary-foreground: oklch(0.955 0.003 250);
+  --muted: oklch(0.24 0.004 250);
+  --muted-foreground: oklch(0.66 0.006 250);
+  --accent: oklch(0.24 0.004 250);
+  --accent-foreground: oklch(0.955 0.003 250);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.57 0.205 37 / 50%);
-  --chart-1: oklch(0.57 0.205 37);
-  --chart-2: oklch(0.70 0.15 45);
+  --ring: oklch(0.93 0.22 125 / 50%);
+  --chart-1: oklch(0.93 0.22 125);
+  --chart-2: oklch(0.955 0.003 250);
   --chart-3: oklch(0.58 0.10 200);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.165 0.005 60);
-  --sidebar-foreground: oklch(0.984 0.002 60);
-  --sidebar-primary: oklch(0.57 0.205 37);
-  --sidebar-primary-foreground: oklch(0.984 0 0);
-  --sidebar-accent: oklch(0.22 0.005 60);
-  --sidebar-accent-foreground: oklch(0.984 0.002 60);
+  --chart-4: oklch(0.55 0.006 250);
+  --chart-5: oklch(0.35 0.004 250);
+  --sidebar: oklch(0.17 0.003 250);
+  --sidebar-foreground: oklch(0.955 0.003 250);
+  --sidebar-primary: oklch(0.93 0.22 125);
+  --sidebar-primary-foreground: oklch(0.16 0.004 250);
+  --sidebar-accent: oklch(0.24 0.004 250);
+  --sidebar-accent-foreground: oklch(0.955 0.003 250);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.57 0.205 37 / 50%);
+  --sidebar-ring: oklch(0.93 0.22 125 / 50%);
 }
 
 @layer base {
@@ -142,3 +146,20 @@
   }
 }
 
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Always-dark brand surfaces (sidebars, dark cards): accent text can use bright lime */
+.on-dark {
+  --primary-text: var(--primary);
+}

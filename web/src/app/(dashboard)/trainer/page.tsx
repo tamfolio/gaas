@@ -128,7 +128,7 @@ export default async function TrainerPage() {
           <p style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.875rem", color: "var(--foreground)" }}>
             Recent check-ins
           </p>
-          <Link href="/trainer/members" style={{ fontSize: "0.78rem", color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}>
+          <Link href="/trainer/members" style={{ fontSize: "0.78rem", color: "var(--primary-text)", fontWeight: 600, textDecoration: "none" }}>
             View all members →
           </Link>
         </div>

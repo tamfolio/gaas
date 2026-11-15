@@ -207,7 +207,7 @@ function CheckInLayout({ children }: { children: React.ReactNode }) {
             color: "var(--foreground)",
           }}
         >
-          Engine<span style={{ color: "var(--primary)" }}>Room</span>
+          Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
         </span>
       </div>
       {children}
@@ -296,7 +296,7 @@ function StatusCard({
             marginTop: "0.25rem",
             fontSize: "0.875rem",
             fontWeight: 600,
-            color: "var(--primary)",
+            color: "var(--primary-text)",
             textDecoration: "none",
           }}
         >

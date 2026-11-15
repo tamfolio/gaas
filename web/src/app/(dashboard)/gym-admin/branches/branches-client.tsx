@@ -119,7 +119,7 @@ function BranchSheet({
             <button
               type="submit"
               disabled={loading}
-              style={{ flex: 1, height: "2.5rem", fontSize: "0.875rem", border: "none", borderRadius: "0.5rem", background: "var(--primary)", color: "white", cursor: loading ? "default" : "pointer", fontFamily: "var(--font-jakarta)", fontWeight: 600, opacity: loading ? 0.7 : 1 }}
+              style={{ flex: 1, height: "2.5rem", fontSize: "0.875rem", border: "none", borderRadius: "0.5rem", background: "var(--primary)", color: "var(--primary-foreground)", cursor: loading ? "default" : "pointer", fontFamily: "var(--font-jakarta)", fontWeight: 600, opacity: loading ? 0.7 : 1 }}
             >
               {loading ? (isEdit ? "Saving…" : "Adding…") : (isEdit ? "Save changes" : "Add branch")}
             </button>
@@ -149,7 +149,7 @@ export function BranchesClient({
       <>
         <button
           onClick={() => setSheet("add")}
-          style={{ background: "var(--primary)", color: "white", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-jakarta)", display: "flex", alignItems: "center", gap: "0.375rem", flexShrink: 0 }}
+          style={{ background: "var(--primary)", color: "var(--primary-foreground)", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-jakarta)", display: "flex", alignItems: "center", gap: "0.375rem", flexShrink: 0 }}
         >
           + Add branch
         </button>
@@ -184,7 +184,7 @@ export function BranchesClient({
                   style={{
                     display: "inline-block", marginTop: "0.25rem",
                     fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase",
-                    color: branch.is_active ? "var(--primary)" : "var(--muted-foreground)",
+                    color: branch.is_active ? "var(--primary-text)" : "var(--muted-foreground)",
                     background: branch.is_active ? "color-mix(in oklch, var(--primary) 10%, transparent)" : "var(--muted)",
                     border: `1px solid ${branch.is_active ? "color-mix(in oklch, var(--primary) 22%, transparent)" : "var(--border)"}`,
                     padding: "0.1rem 0.45rem", borderRadius: "100px",
@@ -223,7 +223,7 @@ export function BranchesClient({
                   borderRadius: "0.375rem", padding: "0.45rem", fontSize: "0.75rem",
                   fontWeight: branch.is_active ? 400 : 600,
                   cursor: "pointer",
-                  color: branch.is_active ? "var(--muted-foreground)" : "var(--primary)",
+                  color: branch.is_active ? "var(--muted-foreground)" : "var(--primary-text)",
                   fontFamily: "var(--font-jakarta)",
                   ...(branch.is_active ? {} : { background: "color-mix(in oklch, var(--primary) 10%, transparent)", borderColor: "color-mix(in oklch, var(--primary) 25%, transparent)" }),
                 }}
