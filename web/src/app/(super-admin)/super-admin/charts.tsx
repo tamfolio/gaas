@@ -60,8 +60,8 @@ export function GymSignupsChart({ data }: { data: DayCount[] }) {
         <AreaChart data={data} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
           <defs>
             <linearGradient id="gymGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#E8460A" stopOpacity={0.18} />
-              <stop offset="95%" stopColor="#E8460A" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.18} />
+              <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -86,11 +86,11 @@ export function GymSignupsChart({ data }: { data: DayCount[] }) {
           <Area
             type="monotone"
             dataKey="count"
-            stroke="#E8460A"
+            stroke="var(--chart-1)"
             strokeWidth={2}
             fill="url(#gymGradient)"
             dot={false}
-            activeDot={{ r: 4, fill: "#E8460A" }}
+            activeDot={{ r: 4, fill: "var(--chart-1)" }}
           />
         </AreaChart>
       </ResponsiveContainer>

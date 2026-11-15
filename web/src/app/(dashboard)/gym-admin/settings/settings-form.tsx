@@ -116,7 +116,7 @@ export function SettingsForm({ gym }: { gym: Gym }) {
           style={{
             padding: "0.65rem 1.5rem",
             background: pending ? "var(--muted)" : "var(--primary)",
-            color: pending ? "var(--muted-foreground)" : "#fff",
+            color: pending ? "var(--muted-foreground)" : "var(--primary-foreground)",
             border: "none",
             borderRadius: "0.5rem",
             fontSize: "0.875rem",

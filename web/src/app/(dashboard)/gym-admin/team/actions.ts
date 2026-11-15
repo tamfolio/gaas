@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/server";
-import { sendMail, buildStaffApprovalRequestEmail } from "@/lib/email";
+import { sendMail, buildStaffApprovalRequestEmail, sendAccountInvite } from "@/lib/email";
 import { sendPushToProfile } from "@/lib/push";
-import { requiresOwnerApproval } from "@/lib/permissions";
+import { requiresOwnerApproval, ROLE_LABELS } from "@/lib/permissions";
 import type { GymStaffRole } from "@/lib/permissions";
 
 const SITE_URL = process.env.SITE_URL ?? "http://localhost:3000";
@@ -124,24 +124,32 @@ export async function inviteStaff(formData: FormData) {
     return { success: true, pendingApproval: true };
   }
 
-  // Direct invite — send Supabase magic link
-  const { data: authData, error: authError } = await adminClient.auth.admin.inviteUserByEmail(
-    email,
-    {
-      data:       { full_name: fullName, role },
-      redirectTo: `${SITE_URL}/auth/callback?next=/gym-admin`,
-    }
-  );
+  // Direct invite — accept link emailed through our own email module
+  const { data: directGym } = await adminClient
+    .from("gyms")
+    .select("name")
+    .eq("id", inviter.gym_id)
+    .single();
 
-  if (authError) return { error: authError.message };
+  const invited = await sendAccountInvite({
+    email,
+    fullName,
+    role,
+    roleLabel:   ROLE_LABELS[role] ?? role,
+    next:        "/gym-admin",
+    gymName:     directGym?.name ?? undefined,
+    inviterName: inviter.full_name ?? undefined,
+  });
+
+  if ("error" in invited) return { error: invited.error };
 
   const { error: profileError } = await adminClient
     .from("profiles")
     .update({ full_name: fullName, gym_id: inviter.gym_id, role })
-    .eq("id", authData.user.id);
+    .eq("id", invited.user.id);
 
   if (profileError) {
-    await adminClient.auth.admin.deleteUser(authData.user.id);
+    await adminClient.auth.admin.deleteUser(invited.user.id);
     return { error: profileError.message };
   }
 
@@ -173,20 +181,27 @@ export async function approveInvite(inviteId: string) {
 
   if (!invite) return { error: "Invite not found" };
 
-  const { data: authData, error: authError } = await adminClient.auth.admin.inviteUserByEmail(
-    invite.email,
-    {
-      data:       { full_name: invite.full_name, role: invite.role },
-      redirectTo: `${SITE_URL}/auth/callback?next=/gym-admin`,
-    }
-  );
+  const { data: approvedGym } = await adminClient
+    .from("gyms")
+    .select("name")
+    .eq("id", invite.gym_id)
+    .single();
 
-  if (authError) return { error: authError.message };
+  const invited = await sendAccountInvite({
+    email:     invite.email,
+    fullName:  invite.full_name,
+    role:      invite.role,
+    roleLabel: ROLE_LABELS[invite.role] ?? invite.role,
+    next:      "/gym-admin",
+    gymName:   approvedGym?.name ?? undefined,
+  });
+
+  if ("error" in invited) return { error: invited.error };
 
   await adminClient
     .from("profiles")
     .update({ full_name: invite.full_name, gym_id: invite.gym_id, role: invite.role })
-    .eq("id", authData.user.id);
+    .eq("id", invited.user.id);
 
   await adminClient.from("gym_staff_invites").delete().eq("id", inviteId);
 

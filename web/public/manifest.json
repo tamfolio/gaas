@@ -5,21 +5,33 @@
   "start_url": "/login",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#1c1914",
-  "theme_color": "#E8460A",
+  "background_color": "#0B0C0E",
+  "theme_color": "#0B0C0E",
   "orientation": "any",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dnovlrekd/image/upload/w_192,h_192/v1784930105/engineroom-favicon_raihiq.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://res.cloudinary.com/dnovlrekd/image/upload/w_512,h_512/v1784930105/engineroom-favicon_raihiq.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }

@@ -49,7 +49,7 @@ export function SuspendedSubscribeForm({
               style={{
                 padding: "0.4rem 1rem", borderRadius: "0.375rem", border: "none",
                 background: period === val ? "var(--primary)" : "transparent",
-                color: period === val ? "#fff" : "var(--muted-foreground)",
+                color: period === val ? "var(--primary-foreground)" : "var(--muted-foreground)",
                 fontSize: "0.82rem", fontWeight: 600, cursor: "pointer",
                 fontFamily: "var(--font-jakarta)",
               }}
@@ -79,7 +79,7 @@ export function SuspendedSubscribeForm({
               }}
             >
               {plan.name === "pro" && (
-                <div style={{ background: "var(--primary)", padding: "0.3rem", textAlign: "center", fontSize: "0.65rem", fontWeight: 700, color: "#fff", letterSpacing: "0.07em", textTransform: "uppercase" }}>
+                <div style={{ background: "var(--primary)", padding: "0.3rem", textAlign: "center", fontSize: "0.65rem", fontWeight: 700, color: "var(--primary-foreground)", letterSpacing: "0.07em", textTransform: "uppercase" }}>
                   Most popular
                 </div>
               )}
@@ -97,7 +97,7 @@ export function SuspendedSubscribeForm({
                 <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1.5rem" }}>
                   {plan.features.map((f) => (
                     <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", fontSize: "0.8rem", color: "var(--muted-foreground)" }}>
-                      <span style={{ color: "var(--primary)", fontWeight: 700, flexShrink: 0, marginTop: "0.05rem" }}>✓</span>
+                      <span style={{ color: "var(--primary-text)", fontWeight: 700, flexShrink: 0, marginTop: "0.05rem" }}>✓</span>
                       {f}
                     </li>
                   ))}
@@ -109,7 +109,7 @@ export function SuspendedSubscribeForm({
                   style={{
                     width: "100%", padding: "0.625rem",
                     background: plan.name === "pro" ? "var(--primary)" : "transparent",
-                    color: plan.name === "pro" ? "#fff" : "var(--foreground)",
+                    color: plan.name === "pro" ? "var(--primary-foreground)" : "var(--foreground)",
                     border: `1px solid ${plan.name === "pro" ? "var(--primary)" : "var(--border)"}`,
                     borderRadius: "0.5rem", fontSize: "0.85rem", fontWeight: 600,
                     cursor: loading ? "default" : "pointer", opacity: loading && !isLoading ? 0.5 : 1,

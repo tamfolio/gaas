@@ -244,7 +244,7 @@ export default async function TeamPage() {
             </div>
             <button
               type="submit"
-              style={{ alignSelf: "flex-start", padding: "0.6rem 1.25rem", background: "var(--primary)", border: "none", borderRadius: "0.5rem", color: "#fff", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-jakarta)" }}
+              style={{ alignSelf: "flex-start", padding: "0.6rem 1.25rem", background: "var(--primary)", border: "none", borderRadius: "0.5rem", color: "var(--primary-foreground)", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-jakarta)" }}
             >
               Send invite
             </button>

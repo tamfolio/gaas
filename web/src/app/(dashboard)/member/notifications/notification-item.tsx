@@ -54,7 +54,7 @@ export function NotificationItem({
           alignItems: "center",
           justifyContent: "center",
           fontSize: "0.875rem",
-          color: notification.is_read ? "var(--muted-foreground)" : "var(--primary)",
+          color: notification.is_read ? "var(--muted-foreground)" : "var(--primary-text)",
           flexShrink: 0,
           marginTop: "0.125rem",
         }}
@@ -94,7 +94,7 @@ export function NotificationItem({
                 border: "none",
                 cursor: "pointer",
                 fontSize: "0.72rem",
-                color: "var(--primary)",
+                color: "var(--primary-text)",
                 fontWeight: 500,
                 padding: 0,
                 flexShrink: 0,

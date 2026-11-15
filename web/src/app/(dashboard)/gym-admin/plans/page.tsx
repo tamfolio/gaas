@@ -214,7 +214,7 @@ export default async function PlansPage() {
                             fontWeight: 600,
                             letterSpacing: "0.07em",
                             textTransform: "uppercase",
-                            color: "var(--primary)",
+                            color: "var(--primary-text)",
                             background:
                               "color-mix(in oklch, var(--primary) 10%, transparent)",
                             border:
@@ -432,7 +432,7 @@ export default async function PlansPage() {
                           fontSize: "0.75rem",
                           fontWeight: 600,
                           cursor: "pointer",
-                          color: "var(--primary)",
+                          color: "var(--primary-text)",
                           fontFamily: "var(--font-jakarta)",
                         }}
                       >

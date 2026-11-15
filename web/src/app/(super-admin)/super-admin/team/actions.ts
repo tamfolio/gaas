@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { sendAccountInvite } from "@/lib/email";
 
-const SITE_URL = process.env.SITE_URL ?? "http://localhost:3000";
 
 export async function invitePlatformStaff(formData: FormData) {
   const supabase = await createClient();
@@ -33,20 +33,20 @@ export async function invitePlatformStaff(formData: FormData) {
 
   if (existing) return { error: "This email already has a platform account" };
 
-  const { data: authData, error: authError } = await adminClient.auth.admin.inviteUserByEmail(
+  const invited = await sendAccountInvite({
     email,
-    {
-      data:       { full_name: fullName, role: "platform_staff" },
-      redirectTo: `${SITE_URL}/auth/callback?next=/super-admin`,
-    }
-  );
+    fullName,
+    role:      "platform_staff",
+    roleLabel: "Platform Staff",
+    next:      "/super-admin",
+  });
 
-  if (authError) return { error: authError.message };
+  if ("error" in invited) return { error: invited.error };
 
   await adminClient
     .from("profiles")
     .update({ full_name: fullName, role: "platform_staff" })
-    .eq("id", authData.user.id);
+    .eq("id", invited.user.id);
 
   revalidatePath("/super-admin/team");
   return { success: true };

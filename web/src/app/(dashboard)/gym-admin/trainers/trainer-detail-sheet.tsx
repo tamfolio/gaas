@@ -241,7 +241,7 @@ export function TrainerDetailSheet({
                 justifyContent: "center",
                 fontSize: "1rem",
                 fontWeight: 700,
-                color: "var(--primary)",
+                color: "var(--primary-text)",
                 flexShrink: 0,
                 border: "2px solid color-mix(in oklch, var(--primary) 25%, transparent)",
               }}
@@ -399,7 +399,7 @@ export function TrainerDetailSheet({
                       fontWeight: 600,
                       letterSpacing: "0.04em",
                       textTransform: "uppercase",
-                      color: "var(--primary)",
+                      color: "var(--primary-text)",
                       background: "color-mix(in oklch, var(--primary) 10%, transparent)",
                       border: "1px solid color-mix(in oklch, var(--primary) 20%, transparent)",
                       padding: "0.2rem 0.625rem",

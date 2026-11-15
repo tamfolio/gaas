@@ -273,7 +273,7 @@ export default async function GymAdminPage() {
                 fontWeight: 600,
                 letterSpacing: "0.07em",
                 textTransform: "uppercase",
-                color: "var(--primary)",
+                color: "var(--primary-text)",
                 background: "color-mix(in oklch, var(--primary) 10%, transparent)",
                 border:
                   "1px solid color-mix(in oklch, var(--primary) 22%, transparent)",
@@ -520,7 +520,7 @@ export default async function GymAdminPage() {
             style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
           >
             {[
-              { key: "active", label: "Active", color: "var(--primary)" },
+              { key: "active", label: "Active", color: "var(--primary-text)" },
               {
                 key: "pending",
                 label: "Pending",
@@ -679,7 +679,7 @@ export default async function GymAdminPage() {
                         justifyContent: "center",
                         fontSize: "0.6rem",
                         fontWeight: 700,
-                        color: "var(--primary)",
+                        color: "var(--primary-text)",
                         flexShrink: 0,
                         letterSpacing: "0.02em",
                       }}

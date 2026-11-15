@@ -41,7 +41,7 @@ export default function ChangePasswordPage() {
         }}
       >
         {/* Header */}
-        <div
+        <div className="on-dark"
           style={{
             background: "var(--brand-dark)",
             padding: "1.75rem 2rem",
@@ -57,7 +57,7 @@ export default function ChangePasswordPage() {
               marginBottom: "0.75rem",
             }}
           >
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+            Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
           </div>
           <h1
             style={{
@@ -138,7 +138,7 @@ export default function ChangePasswordPage() {
               width: "100%",
               height: "2.75rem",
               background: "var(--primary)",
-              color: "#fff",
+              color: "var(--primary-foreground)",
               border: "none",
               borderRadius: "0.5rem",
               fontSize: "0.9rem",

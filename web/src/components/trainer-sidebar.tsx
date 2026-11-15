@@ -39,12 +39,12 @@ function NavItem({
         fontSize: "0.875rem",
         fontWeight: active ? 600 : 400,
         color: active ? "var(--brand-dark-fg)" : "rgba(255,255,255,0.45)",
-        background: active ? "rgba(232, 70, 10, 0.13)" : "transparent",
+        background: active ? "color-mix(in oklch, var(--primary) 13%, transparent)" : "transparent",
         borderLeft: `2px solid ${active ? "var(--primary)" : "transparent"}`,
         letterSpacing: "-0.01em",
       }}
     >
-      <Icon size={15} style={{ color: active ? "var(--primary)" : "rgba(255,255,255,0.3)", flexShrink: 0 }} />
+      <Icon size={15} style={{ color: active ? "var(--primary-text)" : "rgba(255,255,255,0.3)", flexShrink: 0 }} />
       {label}
     </Link>
   );
@@ -64,7 +64,7 @@ function SidebarInner({
   const initials = userName.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 
   return (
-    <div
+    <div className="on-dark"
       style={{
         width: "252px",
         height: "100vh",
@@ -91,7 +91,7 @@ function SidebarInner({
       >
         <Link href="/" style={{ textDecoration: "none", flex: 1, minWidth: 0 }}>
           <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "#fff" }}>
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+            Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
           </span>
           <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.35)", marginTop: "0.3rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {gymName}
@@ -124,9 +124,9 @@ function SidebarInner({
         <div
           style={{
             width: "30px", height: "30px", borderRadius: "50%",
-            background: "rgba(232, 70, 10, 0.18)", border: "1px solid rgba(232, 70, 10, 0.3)",
+            background: "color-mix(in oklch, var(--primary) 18%, transparent)", border: "1px solid color-mix(in oklch, var(--primary) 30%, transparent)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.65rem", fontWeight: 700, color: "var(--primary)", flexShrink: 0,
+            fontSize: "0.65rem", fontWeight: 700, color: "var(--primary-text)", flexShrink: 0,
           }}
         >
           {initials || "?"}
@@ -135,7 +135,7 @@ function SidebarInner({
           <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--brand-dark-fg)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {userName}
           </div>
-          <div style={{ fontSize: "0.62rem", color: "var(--primary)", fontWeight: 500 }}>Trainer</div>
+          <div style={{ fontSize: "0.62rem", color: "var(--primary-text)", fontWeight: 500 }}>Trainer</div>
         </div>
         <form action={logout}>
           <button
@@ -190,7 +190,7 @@ export function TrainerSidebar({ userName, gymName }: { userName: string; gymNam
 
   return (
     <>
-      <div
+      <div className="on-dark"
         style={{
           position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, height: "3.25rem",
           background: "var(--brand-dark)", borderBottom: "1px solid rgba(255,255,255,0.07)",
@@ -201,7 +201,7 @@ export function TrainerSidebar({ userName, gymName }: { userName: string; gymNam
           <Menu size={20} />
         </button>
         <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "#fff" }}>
-          Engine<span style={{ color: "var(--primary)" }}>Room</span>
+          Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
         </span>
         <ThemeToggle onDark />
       </div>
@@ -211,7 +211,7 @@ export function TrainerSidebar({ userName, gymName }: { userName: string; gymNam
           <div onClick={() => setMobileOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 45, backdropFilter: "blur(2px)" }} />
           <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, zIndex: 50 }}>
             <SidebarInner userName={userName} gymName={gymName} pathname={pathname} onClose={() => setMobileOpen(false)} />
-            <button
+            <button className="on-dark"
               onClick={() => setMobileOpen(false)}
               style={{
                 position: "absolute", top: "1rem", right: "-2.75rem",

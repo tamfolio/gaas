@@ -161,7 +161,7 @@ export default async function MemberPage() {
       </div>
 
       {/* Membership card */}
-      <div
+      <div className="on-dark"
         style={{
           background: "var(--brand-dark)",
           borderRadius: "0.875rem",
@@ -176,7 +176,7 @@ export default async function MemberPage() {
             position: "absolute",
             top: 0, right: 0,
             width: "200px", height: "200px",
-            background: "radial-gradient(circle, rgba(232,70,10,0.15) 0%, transparent 70%)",
+            background: "radial-gradient(circle, color-mix(in oklch, var(--primary) 15%, transparent) 0%, transparent 70%)",
             pointerEvents: "none",
           }}
         />
@@ -237,7 +237,7 @@ export default async function MemberPage() {
                   style={{
                     padding: "0.5rem 1rem",
                     background: "var(--primary)",
-                    color: "#fff",
+                    color: "var(--primary-foreground)",
                     border: "none",
                     borderRadius: "0.5rem",
                     fontFamily: "var(--font-jakarta)",

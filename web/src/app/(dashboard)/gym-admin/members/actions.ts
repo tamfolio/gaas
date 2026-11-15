@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { sendMail, buildWelcomeMemberEmail } from "@/lib/email";
+import { sendMail, buildWelcomeMemberEmail, sendAccountInvite } from "@/lib/email";
 import { convertReferralOnFirstPayment } from "@/lib/referrals";
 
 function generateBarcode() {
@@ -175,17 +175,24 @@ export async function addTrainer(formData: FormData) {
   const specialization = (formData.get("specialization") as string) || null;
   const bio = (formData.get("bio") as string) || null;
 
-  const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
+  const { data: trainerGym } = await adminClient
+    .from("gyms")
+    .select("name")
+    .eq("id", gymId)
+    .single();
 
-  const { data: authData, error: authError } =
-    await adminClient.auth.admin.inviteUserByEmail(email, {
-      data: { full_name: fullName, role: "trainer" },
-      redirectTo: `${siteUrl}/auth/callback?next=/trainer`,
-    });
+  const invited = await sendAccountInvite({
+    email,
+    fullName,
+    role: "trainer",
+    roleLabel: "Trainer",
+    next: "/trainer",
+    gymName: trainerGym?.name ?? undefined,
+  });
 
-  if (authError) return { error: authError.message };
+  if ("error" in invited) return { error: invited.error };
 
-  const userId = authData.user.id;
+  const userId = invited.user.id;
 
   const { error: profileError } = await adminClient
     .from("profiles")

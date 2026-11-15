@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { sendMail, buildPasswordResetEmail, createAuthEmailLink } from "@/lib/email";
+
+const RESET_EMAIL_COOLDOWN_MS = 60_000;
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -113,16 +116,52 @@ export async function logout() {
 }
 
 export async function forgotPassword(formData: FormData) {
-  const email = formData.get("email") as string;
-  const supabase = await createClient();
+  const email = ((formData.get("email") as string) ?? "").trim().toLowerCase();
+  if (!email) return { error: "Enter your email address." };
 
-  const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
+  // Always report success so this form can't be used to discover which emails have accounts.
+  try {
+    const adminClient = createAdminClient();
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
-  });
+    const { data: profile } = await adminClient
+      .from("profiles")
+      .select("id, full_name")
+      .eq("email", email)
+      .maybeSingle();
+    if (!profile) return { success: true };
 
-  if (error) return { error: error.message };
+    // Throttle: at most one reset email per address per minute.
+    const { data: authUser } = await adminClient.auth.admin.getUserById(profile.id);
+    const appMeta = (authUser?.user?.app_metadata ?? {}) as Record<string, unknown>;
+    const lastSent = Date.parse(String(appMeta.last_reset_email_at ?? ""));
+    if (!Number.isNaN(lastSent) && Date.now() - lastSent < RESET_EMAIL_COOLDOWN_MS) {
+      return { success: true };
+    }
+
+    const link = await createAuthEmailLink({
+      type: "recovery",
+      email,
+      name: profile.full_name,
+      next: "/reset-password",
+    });
+    if ("error" in link) {
+      console.error("[forgotPassword] link generation failed", link.error);
+      return { success: true };
+    }
+
+    await sendMail({
+      to: email,
+      subject: "Reset your EngineRoom password",
+      html: buildPasswordResetEmail({ name: profile.full_name, resetUrl: link.url }),
+    });
+
+    await adminClient.auth.admin.updateUserById(profile.id, {
+      app_metadata: { ...appMeta, last_reset_email_at: new Date().toISOString() },
+    });
+  } catch (err) {
+    console.error("[forgotPassword] failed", err);
+  }
+
   return { success: true };
 }
 

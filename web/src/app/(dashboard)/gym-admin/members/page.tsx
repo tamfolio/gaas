@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { AddMemberSheet } from "@/components/add-member-sheet";
 import { MembersClient } from "./members-client";
+import { WORKOUT_PLAN_ADMIN_ROLES } from "@/lib/workout-plans";
 
 export default async function MembersPage() {
   const supabase = await createClient();
@@ -10,7 +11,7 @@ export default async function MembersPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("gym_id")
+    .select("gym_id, role")
     .eq("id", user!.id)
     .single();
 
@@ -92,6 +93,7 @@ export default async function MembersPage() {
         members={(members as any) ?? []}
         gymId={gymId}
         plans={plans ?? []}
+        canAssignWorkouts={(WORKOUT_PLAN_ADMIN_ROLES as readonly string[]).includes(profile!.role)}
       />
     </div>
   );
