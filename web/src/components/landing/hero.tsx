@@ -27,15 +27,15 @@ export function Hero() {
           <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
         </a>
 
-        <h1 className="mt-7 font-heading text-[clamp(2.4rem,5vw,4.25rem)] leading-[1] font-extrabold tracking-[-0.045em] text-balance text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700">
+        <h1 className="mt-7 font-heading text-[clamp(1.9rem,1.2rem+3.6vw,4.25rem)] leading-[1.12] sm:leading-[1.02] font-extrabold tracking-[-0.045em] text-balance text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700">
           The operating system for{" "}
-          <span className="relative inline-block whitespace-nowrap text-primary-foreground">
-            <span aria-hidden className="absolute inset-x-[-0.12em] -bottom-[0.14em] top-[0.14em] -z-10 -skew-x-6 rounded-[0.12em] bg-primary" />
+          {/* Inline highlight: wraps per line on phones, each line gets its own lime block */}
+          <span className="rounded-[0.12em] bg-primary box-decoration-clone px-[0.1em] pb-[0.06em] text-primary-foreground sm:whitespace-nowrap">
             Nigerian gyms.
           </span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-[52ch] text-lg leading-relaxed text-pretty text-muted-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:delay-150 motion-safe:fill-mode-both motion-safe:duration-700">
+        <p className="mx-auto mt-6 max-w-[52ch] text-base leading-relaxed sm:text-lg text-pretty text-muted-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:delay-150 motion-safe:fill-mode-both motion-safe:duration-700">
           Members, renewals, QR check-ins, trainers and Paystack payments — in one dashboard
           your whole team actually enjoys using. Ditch the spreadsheets and WhatsApp chases.
         </p>
