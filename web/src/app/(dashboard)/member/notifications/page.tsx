@@ -70,7 +70,7 @@ export default async function NotificationsPage() {
                   fontSize: "0.875rem",
                   fontFamily: "var(--font-jakarta)",
                   fontWeight: 600,
-                  color: "var(--primary)",
+                  color: "var(--primary-text)",
                   letterSpacing: "0",
                 }}
               >

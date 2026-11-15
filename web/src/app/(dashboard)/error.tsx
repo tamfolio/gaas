@@ -58,7 +58,7 @@ export default function DashboardError({
         onClick={reset}
         style={{
           background: "var(--primary)",
-          color: "var(--brand-dark-fg)",
+          color: "var(--primary-foreground)",
           fontWeight: 600,
           fontSize: "0.875rem",
           padding: "0.625rem 1.5rem",

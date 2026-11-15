@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
         </p>
         <Link
           href="/login"
-          style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none", fontSize: "0.875rem" }}
+          style={{ color: "var(--primary-text)", fontWeight: 600, textDecoration: "none", fontSize: "0.875rem" }}
         >
           ← Back to sign in
         </Link>
@@ -139,7 +139,7 @@ export default function ForgotPasswordPage() {
         }}
       >
         Remember it?{" "}
-        <Link href="/login" style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}>
+        <Link href="/login" style={{ color: "var(--primary-text)", fontWeight: 600, textDecoration: "none" }}>
           Sign in →
         </Link>
       </p>

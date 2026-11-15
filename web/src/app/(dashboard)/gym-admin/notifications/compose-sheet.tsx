@@ -65,7 +65,7 @@ export function ComposeSheet({ gymId, members }: { gymId: string; members: Membe
         onClick={() => setOpen(true)}
         style={{
           background: "var(--primary)",
-          color: "white",
+          color: "var(--primary-foreground)",
           border: "none",
           borderRadius: "0.5rem",
           padding: "0.6rem 1.25rem",
@@ -194,7 +194,7 @@ export function ComposeSheet({ gymId, members }: { gymId: string; members: Membe
                 <button
                   type="submit"
                   disabled={isPending}
-                  style={{ flex: 1, height: "2.5rem", borderRadius: "0.5rem", border: "none", background: "var(--primary)", color: "white", fontSize: "0.875rem", fontWeight: 600, cursor: isPending ? "not-allowed" : "pointer", fontFamily: "var(--font-jakarta)", opacity: isPending ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}
+                  style={{ flex: 1, height: "2.5rem", borderRadius: "0.5rem", border: "none", background: "var(--primary)", color: "var(--primary-foreground)", fontSize: "0.875rem", fontWeight: 600, cursor: isPending ? "not-allowed" : "pointer", fontFamily: "var(--font-jakarta)", opacity: isPending ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}
                 >
                   <Send size={14} />
                   {isPending ? "Sending…" : "Send"}

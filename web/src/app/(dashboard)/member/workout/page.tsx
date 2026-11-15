@@ -112,7 +112,7 @@ export default async function WorkoutPage() {
       ) : (
         <>
           {/* Plan header */}
-          <div
+          <div className="on-dark"
             style={{
               background: "var(--brand-dark)",
               borderRadius: "0.875rem",
@@ -129,7 +129,7 @@ export default async function WorkoutPage() {
                 right: 0,
                 width: "180px",
                 height: "180px",
-                background: "radial-gradient(circle, rgba(232,70,10,0.12) 0%, transparent 70%)",
+                background: "radial-gradient(circle, color-mix(in oklch, var(--primary) 12%, transparent) 0%, transparent 70%)",
                 pointerEvents: "none",
               }}
             />
@@ -173,9 +173,9 @@ export default async function WorkoutPage() {
                         fontWeight: 600,
                         letterSpacing: "0.06em",
                         textTransform: "uppercase",
-                        color: "var(--primary)",
-                        background: "rgba(232,70,10,0.15)",
-                        border: "1px solid rgba(232,70,10,0.3)",
+                        color: "var(--primary-text)",
+                        background: "color-mix(in oklch, var(--primary) 15%, transparent)",
+                        border: "1px solid color-mix(in oklch, var(--primary) 30%, transparent)",
                         padding: "0.2rem 0.625rem",
                         borderRadius: "100px",
                       }}
@@ -213,7 +213,7 @@ export default async function WorkoutPage() {
                 <span
                   style={{
                     background: "var(--primary)",
-                    color: "#fff",
+                    color: "var(--primary-foreground)",
                     fontSize: "0.65rem",
                     fontWeight: 700,
                     padding: "0.2rem 0.625rem",
@@ -297,7 +297,7 @@ export default async function WorkoutPage() {
                             style={{
                               fontSize: "0.72rem",
                               fontWeight: 600,
-                              color: "var(--primary)",
+                              color: "var(--primary-text)",
                               background: "color-mix(in oklch, var(--primary) 10%, transparent)",
                               border: "1px solid color-mix(in oklch, var(--primary) 20%, transparent)",
                               padding: "0.15rem 0.5rem",

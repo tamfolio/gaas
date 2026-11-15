@@ -230,7 +230,7 @@ export default async function TrainerMemberDetailPage({
               Current workout plan
             </p>
             {workoutPlan?.ai_generated && (
-              <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", padding: "0.15rem 0.45rem", borderRadius: "100px", color: "var(--primary)", background: "color-mix(in oklch, var(--primary) 10%, transparent)", border: "1px solid color-mix(in oklch, var(--primary) 25%, transparent)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", padding: "0.15rem 0.45rem", borderRadius: "100px", color: "var(--primary-text)", background: "color-mix(in oklch, var(--primary) 10%, transparent)", border: "1px solid color-mix(in oklch, var(--primary) 25%, transparent)" }}>
                 AI
               </span>
             )}
@@ -240,7 +240,7 @@ export default async function TrainerMemberDetailPage({
             style={{
               fontSize: "0.72rem",
               fontWeight: 600,
-              color: "var(--primary)",
+              color: "var(--primary-text)",
               textDecoration: "none",
               padding: "0.3rem 0.75rem",
               border: "1px solid color-mix(in oklch, var(--primary) 35%, transparent)",

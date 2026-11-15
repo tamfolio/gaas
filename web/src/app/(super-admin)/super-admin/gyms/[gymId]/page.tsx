@@ -185,7 +185,7 @@ export default async function GymDetailPage({ params }: { params: Promise<{ gymI
                   background: "var(--primary)",
                   border: "none",
                   borderRadius: "0.5rem",
-                  color: "#fff",
+                  color: "var(--primary-foreground)",
                   fontSize: "0.8rem",
                   fontWeight: 600,
                   cursor: "pointer",

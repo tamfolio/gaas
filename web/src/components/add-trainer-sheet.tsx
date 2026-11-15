@@ -36,7 +36,7 @@ export function AddTrainerSheet({ gymId }: { gymId: string }) {
         onClick={() => setOpen(true)}
         style={{
           background: "var(--primary)",
-          color: "white",
+          color: "var(--primary-foreground)",
           border: "none",
           borderRadius: "0.5rem",
           padding: "0.6rem 1.25rem",
@@ -239,7 +239,7 @@ export function AddTrainerSheet({ gymId }: { gymId: string }) {
                     height: "2.5rem",
                     fontSize: "0.875rem",
                     background: "var(--primary)",
-                    color: "white",
+                    color: "var(--primary-foreground)",
                     border: "none",
                   }}
                 >

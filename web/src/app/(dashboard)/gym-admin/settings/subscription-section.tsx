@@ -35,7 +35,7 @@ function StatusBadge({ status }: { status: string }) {
       style={{
         fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.06em",
         textTransform: "uppercase",
-        color: active ? "oklch(0.35 0.12 155)" : trial ? "var(--primary)" : "var(--muted-foreground)",
+        color: active ? "oklch(0.35 0.12 155)" : trial ? "var(--primary-text)" : "var(--muted-foreground)",
         background: active ? "oklch(0.96 0.04 155)" : trial ? "color-mix(in oklch, var(--primary) 10%, transparent)" : "var(--muted)",
         border: `1px solid ${active ? "oklch(0.85 0.07 155)" : trial ? "color-mix(in oklch, var(--primary) 25%, transparent)" : "var(--border)"}`,
         padding: "0.2rem 0.625rem", borderRadius: "100px",
@@ -128,7 +128,7 @@ export function SubscriptionSection({
                 }}
               >
                 {label}
-                {val === "annual" && <span style={{ marginLeft: "0.3rem", fontSize: "0.65rem", color: "var(--primary)", fontWeight: 700 }}>~15% off</span>}
+                {val === "annual" && <span style={{ marginLeft: "0.3rem", fontSize: "0.65rem", color: "var(--primary-text)", fontWeight: 700 }}>~15% off</span>}
               </button>
             ))}
           </div>
@@ -154,12 +154,12 @@ export function SubscriptionSection({
                 }}
               >
                 {plan.name === "pro" && !isCurrent && (
-                  <div style={{ background: "var(--primary)", padding: "0.25rem", textAlign: "center", fontSize: "0.6rem", fontWeight: 700, color: "#fff", letterSpacing: "0.07em", textTransform: "uppercase" }}>
+                  <div style={{ background: "var(--primary)", padding: "0.25rem", textAlign: "center", fontSize: "0.6rem", fontWeight: 700, color: "var(--primary-foreground)", letterSpacing: "0.07em", textTransform: "uppercase" }}>
                     Popular
                   </div>
                 )}
                 {isCurrent && (
-                  <div style={{ background: "color-mix(in oklch, var(--primary) 15%, transparent)", padding: "0.25rem", textAlign: "center", fontSize: "0.6rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "0.07em", textTransform: "uppercase" }}>
+                  <div style={{ background: "color-mix(in oklch, var(--primary) 15%, transparent)", padding: "0.25rem", textAlign: "center", fontSize: "0.6rem", fontWeight: 700, color: "var(--primary-text)", letterSpacing: "0.07em", textTransform: "uppercase" }}>
                     Current plan
                   </div>
                 )}
@@ -177,7 +177,7 @@ export function SubscriptionSection({
                   <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.4rem", marginBottom: "1.125rem" }}>
                     {plan.features.map((f) => (
                       <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: "0.4rem", fontSize: "0.75rem", color: "var(--muted-foreground)" }}>
-                        <span style={{ color: "var(--primary)", fontWeight: 700, flexShrink: 0 }}>✓</span>
+                        <span style={{ color: "var(--primary-text)", fontWeight: 700, flexShrink: 0 }}>✓</span>
                         {f}
                       </li>
                     ))}
@@ -189,7 +189,7 @@ export function SubscriptionSection({
                     style={{
                       width: "100%", padding: "0.5rem",
                       background: isCurrent ? "var(--muted)" : plan.name === "pro" ? "var(--primary)" : "transparent",
-                      color: isCurrent ? "var(--muted-foreground)" : plan.name === "pro" ? "#fff" : "var(--foreground)",
+                      color: isCurrent ? "var(--muted-foreground)" : plan.name === "pro" ? "var(--primary-foreground)" : "var(--foreground)",
                       border: `1px solid ${isCurrent ? "var(--border)" : plan.name === "pro" ? "var(--primary)" : "var(--border)"}`,
                       borderRadius: "0.375rem", fontSize: "0.78rem", fontWeight: 600,
                       cursor: loading || isCurrent ? "default" : "pointer",

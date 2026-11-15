@@ -65,7 +65,7 @@ function SidebarInner({ adminName, userRole }: { adminName: string; userRole: Us
               color: "var(--foreground)",
             }}
           >
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+            Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
           </span>
           <span
             style={{
@@ -73,7 +73,7 @@ function SidebarInner({ adminName, userRole }: { adminName: string; userRole: Us
               fontWeight: 700,
               letterSpacing: "0.07em",
               textTransform: "uppercase",
-              color: "var(--primary)",
+              color: "var(--primary-text)",
               background: "color-mix(in oklch, var(--primary) 10%, transparent)",
               border: "1px solid color-mix(in oklch, var(--primary) 22%, transparent)",
               padding: "0.1rem 0.4rem",
@@ -108,7 +108,7 @@ function SidebarInner({ adminName, userRole }: { adminName: string; userRole: Us
               flexShrink: 0,
             }}
           >
-            <ShieldCheck size={14} style={{ color: "var(--primary)" }} />
+            <ShieldCheck size={14} style={{ color: "var(--primary-text)" }} />
           </div>
           <div style={{ minWidth: 0 }}>
             <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -175,9 +175,9 @@ export function SuperAdminSidebar({ adminName, userRole }: { adminName: string; 
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
           <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "-0.04em", color: "var(--foreground)" }}>
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+            Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
           </span>
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--primary)", background: "color-mix(in oklch, var(--primary) 10%, transparent)", border: "1px solid color-mix(in oklch, var(--primary) 22%, transparent)", padding: "0.1rem 0.35rem", borderRadius: "100px" }}>
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--primary-text)", background: "color-mix(in oklch, var(--primary) 10%, transparent)", border: "1px solid color-mix(in oklch, var(--primary) 22%, transparent)", padding: "0.1rem 0.35rem", borderRadius: "100px" }}>
             Admin
           </span>
         </div>

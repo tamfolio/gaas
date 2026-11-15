@@ -19,7 +19,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div style={{ minHeight: "100vh", display: "flex" }}>
       {/* Brand panel — desktop only */}
       {isDesktop && (
-        <div
+        <div className="on-dark"
           style={{
             background: "var(--brand-dark)",
             width: "58%",
@@ -32,7 +32,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         >
           <Link href="/" style={{ textDecoration: "none", display: "inline-block" }}>
             <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-0.04em", color: "#fff" }}>
-              Engine<span style={{ color: "var(--primary)" }}>Room</span>
+              Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
             </span>
           </Link>
 
@@ -52,7 +52,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <br />
               Every member.
               <br />
-              <span style={{ color: "var(--primary)" }}>All the gains.</span>
+              <span style={{ color: "var(--primary-text)" }}>All the gains.</span>
             </h1>
             <p
               style={{
@@ -138,7 +138,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             }}
           >
             <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-0.04em", color: "var(--foreground)" }}>
-              Engine<span style={{ color: "var(--primary)" }}>Room</span>
+              Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
             </span>
             <ThemeToggle />
           </div>

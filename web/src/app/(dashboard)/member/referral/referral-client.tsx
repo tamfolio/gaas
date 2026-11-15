@@ -49,7 +49,7 @@ export function ReferralPageClient({
       </div>
 
       {/* Code card */}
-      <div
+      <div className="on-dark"
         style={{
           background: "var(--brand-dark)",
           borderRadius: "0.875rem",
@@ -64,7 +64,7 @@ export function ReferralPageClient({
           style={{
             position: "absolute", top: 0, right: 0,
             width: "200px", height: "200px",
-            background: "radial-gradient(circle, rgba(232,70,10,0.15) 0%, transparent 70%)",
+            background: "radial-gradient(circle, color-mix(in oklch, var(--primary) 15%, transparent) 0%, transparent 70%)",
             pointerEvents: "none",
           }}
         />
@@ -90,7 +90,7 @@ export function ReferralPageClient({
               onClick={handleCopy}
               style={{
                 background: copied ? "oklch(0.35 0.12 155)" : "var(--primary)",
-                color: "#fff",
+                color: "var(--primary-foreground)",
                 border: "none",
                 borderRadius: "0.5rem",
                 padding: "0.6rem 1.5rem",
@@ -163,7 +163,7 @@ export function ReferralPageClient({
                   background: "color-mix(in oklch, var(--primary) 12%, transparent)",
                   border: "1px solid color-mix(in oklch, var(--primary) 25%, transparent)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.68rem", fontWeight: 700, color: "var(--primary)",
+                  fontSize: "0.68rem", fontWeight: 700, color: "var(--primary-text)",
                 }}
               >
                 {step}

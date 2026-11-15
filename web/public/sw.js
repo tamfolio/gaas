@@ -1,4 +1,4 @@
-const CACHE_NAME = "engineroom-v2";
+const CACHE_NAME = "engineroom-v3";
 const OFFLINE_URL = "/offline";
 
 // Install: pre-cache the offline page
@@ -39,8 +39,8 @@ self.addEventListener("push", (event) => {
   const title = payload.title ?? "EngineRoom";
   const options = {
     body:    payload.body ?? "",
-    icon:    "/icons/icon-192x192.png",
-    badge:   "/icons/icon-192x192.png",
+    icon:    "/icons/icon-192.png",
+    badge:   "/icons/icon-192.png",
     data:    { url: payload.url ?? "/" },
   };
 

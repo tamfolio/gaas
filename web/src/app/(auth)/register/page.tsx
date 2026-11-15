@@ -99,7 +99,7 @@ export default function RegisterPage() {
         </p>
         <Link
           href="/login"
-          style={{ color: "var(--primary)", fontWeight: 600, fontSize: "0.875rem", textDecoration: "none" }}
+          style={{ color: "var(--primary-text)", fontWeight: 600, fontSize: "0.875rem", textDecoration: "none" }}
         >
           Back to sign in →
         </Link>
@@ -223,7 +223,7 @@ export default function RegisterPage() {
         Already have an account?{" "}
         <Link
           href="/login"
-          style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}
+          style={{ color: "var(--primary-text)", fontWeight: 600, textDecoration: "none" }}
         >
           Sign in →
         </Link>

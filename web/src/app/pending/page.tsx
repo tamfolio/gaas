@@ -26,7 +26,7 @@ export default function PendingPage() {
               color: "var(--foreground)",
             }}
           >
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+            Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
           </span>
         </Link>
       </div>

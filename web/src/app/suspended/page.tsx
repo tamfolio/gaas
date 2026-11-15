@@ -60,7 +60,7 @@ export default async function SuspendedPage() {
       <div style={{ marginBottom: "2.5rem", marginTop: "1rem" }}>
         <Link href="/" style={{ textDecoration: "none" }}>
           <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.3rem", letterSpacing: "-0.04em", color: "var(--foreground)" }}>
-            Engine<span style={{ color: "var(--primary)" }}>Room</span>
+            Engine<span style={{ color: "var(--primary-text)" }}>Room</span>
           </span>
         </Link>
       </div>

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyWebhookSignature } from "@/lib/paystack/client";
 import { createAdminClient } from "@/lib/supabase/server";
 import { convertReferralOnFirstPayment } from "@/lib/referrals";
+import { sendMail, buildPaymentReceiptEmail, buildGymSubscriptionReceiptEmail } from "@/lib/email";
+
+const SITE_URL = process.env.SITE_URL ?? "http://localhost:3000";
 
 type ChargeData = {
   reference: string;
@@ -49,7 +52,7 @@ async function handleChargeSuccess(data: ChargeData) {
   // Find the pre-created pending payment record
   const { data: payment } = await adminClient
     .from("payments")
-    .select("id, status, gym_member_id")
+    .select("id, status, gym_member_id, amount")
     .eq("paystack_reference", reference)
     .maybeSingle();
 
@@ -104,6 +107,42 @@ async function handleChargeSuccess(data: ChargeData) {
   if (gymId) {
     await convertReferralOnFirstPayment(gymMemberId, gymId);
   }
+
+  // Receipt — best-effort; never let an email failure break payment processing.
+  // Only reached on the first successful processing (already-paid retries return early above).
+  try {
+    const { data: member } = await adminClient
+      .from("gym_members")
+      .select(
+        "profiles:profile_id(full_name, email), membership_plans:membership_plan_id(name), gyms:gym_id(name)",
+      )
+      .eq("id", gymMemberId)
+      .single();
+
+    const profile = member?.profiles as unknown as { full_name: string | null; email: string | null } | null;
+    const planName = (member?.membership_plans as unknown as { name: string } | null)?.name ?? null;
+    const gymName = (member?.gyms as unknown as { name: string } | null)?.name ?? "your gym";
+    const to = profile?.email ?? data.customer?.email;
+
+    if (to) {
+      await sendMail({
+        to,
+        subject: `Payment receipt — ${gymName}`,
+        html: buildPaymentReceiptEmail({
+          gymName,
+          memberName: profile?.full_name ?? "there",
+          planName,
+          amount: payment?.amount ?? data.amount / 100,
+          reference,
+          paidAt: new Date().toISOString(),
+          validUntil: endDate,
+          dashboardUrl: `${SITE_URL}/member/billing`,
+        }),
+      });
+    }
+  } catch (err) {
+    console.error("[paystack webhook] member receipt email failed", err);
+  }
 }
 
 async function handleGymSubscription(data: ChargeData) {
@@ -156,4 +195,40 @@ async function handleGymSubscription(data: ChargeData) {
       subscription_expires_at: expiresAt,
     })
     .eq("id", gymId);
+
+  // Receipt to the gym owner — best-effort.
+  try {
+    const [{ data: gym }, { data: owner }, { data: platformPlan }] = await Promise.all([
+      adminClient.from("gyms").select("name, email").eq("id", gymId).single(),
+      adminClient
+        .from("profiles")
+        .select("full_name, email")
+        .eq("gym_id", gymId)
+        .eq("role", "gym_admin")
+        .limit(1)
+        .maybeSingle(),
+      adminClient.from("platform_plans").select("display_name").eq("name", plan).maybeSingle(),
+    ]);
+
+    const to = owner?.email ?? gym?.email;
+    if (to) {
+      await sendMail({
+        to,
+        subject: `EngineRoom subscription receipt — ${gym?.name ?? "your gym"}`,
+        html: buildGymSubscriptionReceiptEmail({
+          gymName: gym?.name ?? "your gym",
+          ownerName: owner?.full_name ?? "there",
+          planName: platformPlan?.display_name ?? plan,
+          period,
+          amount: payment?.amount ?? data.amount / 100,
+          reference,
+          paidAt: now.toISOString(),
+          validUntil: expiresAt,
+          billingUrl: `${SITE_URL}/gym-admin/settings`,
+        }),
+      });
+    }
+  } catch (err) {
+    console.error("[paystack webhook] subscription receipt email failed", err);
+  }
 }

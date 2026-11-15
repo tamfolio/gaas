@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X, Trash2, Plus, Dumbbell } from "lucide-react";
-import { assignWorkoutPlan } from "./actions";
+import type { SaveWorkoutPlanAction } from "./types";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -217,7 +217,7 @@ function ExerciseSearch({
                 </p>
               </div>
 
-              <Plus size={13} style={{ color: "var(--primary)", flexShrink: 0 }} />
+              <Plus size={13} style={{ color: "var(--primary-text)", flexShrink: 0 }} />
             </button>
           ))}
         </div>
@@ -454,9 +454,15 @@ function DayCard({
 export function PlanBuilder({
   memberId,
   memberName,
+  saveAction,
+  doneHref,
 }: {
   memberId: string;
   memberName: string;
+  /** Server action that authorises the caller and saves the plan. */
+  saveAction: SaveWorkoutPlanAction;
+  /** Where to go after a successful save. */
+  doneHref: string;
 }) {
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -572,19 +578,20 @@ export function PlanBuilder({
               sets: e.sets,
               reps: e.reps,
               rest_seconds: e.rest_seconds,
-              ...(e.notes ? { notes: e.notes } : {}),
+              notes: e.notes?.trim() || null,
             })),
           })),
         },
       ],
     };
 
-    const result = await assignWorkoutPlan({ memberId, title: title.trim(), planData });
-    if (result?.error) {
+    const result = await saveAction({ memberId, title: title.trim(), planData });
+    if ("error" in result) {
       setError(result.error);
       setSaving(false);
     } else {
-      router.push(`/trainer/members/${memberId}`);
+      router.push(doneHref);
+      router.refresh();
     }
   };
 
@@ -689,7 +696,7 @@ export function PlanBuilder({
                   background: active
                     ? "color-mix(in oklch, var(--primary) 12%, transparent)"
                     : "var(--card)",
-                  color: active ? "var(--primary)" : "var(--muted-foreground)",
+                  color: active ? "var(--primary-text)" : "var(--muted-foreground)",
                   fontSize: "0.75rem",
                   fontWeight: active ? 700 : 500,
                   cursor: "pointer",
@@ -745,7 +752,7 @@ export function PlanBuilder({
         style={{
           padding: "0.7rem 1.75rem",
           background: saving ? "var(--muted)" : "var(--primary)",
-          color: saving ? "var(--muted-foreground)" : "#fff",
+          color: saving ? "var(--muted-foreground)" : "var(--primary-foreground)",
           border: "none",
           borderRadius: "0.5rem",
           fontSize: "0.875rem",

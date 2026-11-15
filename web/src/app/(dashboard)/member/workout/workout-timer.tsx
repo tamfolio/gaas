@@ -99,9 +99,9 @@ export function WorkoutTimer() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 2px 12px rgba(232,70,10,0.4)",
+            boxShadow: "0 2px 12px color-mix(in oklch, var(--primary) 40%, transparent)",
             zIndex: 20,
-            color: "#fff",
+            color: "var(--primary-foreground)",
           }}
         >
           <Timer size={20} />
@@ -148,7 +148,7 @@ export function WorkoutTimer() {
                     fontWeight: 600,
                     letterSpacing: "0.04em",
                     background: mode === m ? "var(--primary)" : "var(--muted)",
-                    color: mode === m ? "#fff" : "var(--muted-foreground)",
+                    color: mode === m ? "var(--primary-foreground)" : "var(--muted-foreground)",
                   }}
                 >
                   {m === "stopwatch" ? "Stopwatch" : "Rest Timer"}
@@ -172,13 +172,13 @@ export function WorkoutTimer() {
                 fontWeight: 800,
                 letterSpacing: "-0.04em",
                 lineHeight: 1,
-                color: isDone ? "var(--primary)" : "var(--foreground)",
+                color: isDone ? "var(--primary-text)" : "var(--foreground)",
               }}
             >
               {display}
             </p>
             {isDone && (
-              <p style={{ fontSize: "0.75rem", color: "var(--primary)", fontWeight: 600, marginTop: "0.375rem" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--primary-text)", fontWeight: 600, marginTop: "0.375rem" }}>
                 Rest complete!
               </p>
             )}
@@ -196,7 +196,7 @@ export function WorkoutTimer() {
                     borderRadius: "0.375rem",
                     border: "1px solid var(--border)",
                     background: countdownFrom === p.seconds ? "color-mix(in oklch, var(--primary) 12%, transparent)" : "var(--muted)",
-                    color: countdownFrom === p.seconds ? "var(--primary)" : "var(--muted-foreground)",
+                    color: countdownFrom === p.seconds ? "var(--primary-text)" : "var(--muted-foreground)",
                     fontSize: "0.7rem",
                     fontWeight: 600,
                     cursor: "pointer",
@@ -229,7 +229,7 @@ export function WorkoutTimer() {
                 border: "none",
                 cursor: "pointer",
                 background: "var(--primary)",
-                color: "#fff",
+                color: "var(--primary-foreground)",
                 fontWeight: 600,
                 fontSize: "0.82rem",
               }}
