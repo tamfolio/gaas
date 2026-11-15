@@ -5,7 +5,7 @@ import {
   Gift,
   QrCode,
   ShieldCheck,
-  Sparkles,
+  Dumbbell,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -140,9 +140,9 @@ export function Features() {
           </Card>
 
           <Card
-            icon={Sparkles}
-            title="AI workout plans"
-            desc="Generate a personalised plan for any member in seconds, or let trainers build one from a full exercise library."
+            icon={Dumbbell}
+            title="Workout plans"
+            desc="Trainers and gym admins build plans from a library of 400 exercises. Members follow them on their phone, with a built-in workout timer."
             className="lg:col-span-2"
           >
             <div className="space-y-2 rounded-2xl border border-border bg-background/60 p-3 text-sm">

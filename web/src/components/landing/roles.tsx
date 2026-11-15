@@ -31,7 +31,7 @@ const roles: { icon: LucideIcon; who: string; title: string; points: string[] }[
     points: [
       "Scan to check in at any allowed branch",
       "Renew their plan online in seconds",
-      "AI workout plans, timer and BMI tracker",
+      "Workout plan from their trainer, timer and BMI tracker",
       "Referral code that earns free days",
     ],
   },

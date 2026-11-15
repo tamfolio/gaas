@@ -23,7 +23,7 @@ export function Hero() {
           className="group inline-flex items-center gap-2 rounded-full border border-border bg-card/60 py-1 pr-3 pl-1 text-xs font-medium text-muted-foreground backdrop-blur transition-colors hover:text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:duration-700"
         >
           <span className="rounded-full bg-primary/10 px-2 py-0.5 font-semibold text-primary-text">New</span>
-          AI workout plans for every member
+          Workout plans from your trainers, on every phone
           <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
         </a>
 
